@@ -1,3 +1,8 @@
+mod core;
+
 fn main() {
-    println!("Hello, world!");
+    if let Err(error) = core::run() {
+        println!("{}", error);
+        std::process::exit(1);
+    }
 }
