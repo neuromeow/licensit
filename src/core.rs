@@ -17,6 +17,12 @@ fn print_licence_names_list() {
     }
 }
 
+#[allow(dead_code)]
+fn get_license_content(filepath: &str) -> Result<String, Box<dyn Error>> {
+    let license_content = fs::read_to_string(filepath)?;
+    Ok(license_content)
+}
+
 pub fn run() -> Result<(), Box<dyn Error>> {
     print_licence_names_list();
     Ok(())
