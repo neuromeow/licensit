@@ -1,5 +1,8 @@
+use clap::Parser;
 use std::error::Error;
 use std::fs;
+
+use crate::cli::{Cli, Commands};
 
 const LICENSES_NAMES: [(&str, &str); 7] = [
     ("agpl-3.0", "GNU Affero General Public License v3.0"),
@@ -24,7 +27,12 @@ fn get_license_content(filepath: &str) -> Result<String, Box<dyn Error>> {
 }
 
 pub fn run() -> Result<(), Box<dyn Error>> {
-    print_licence_names_list();
+    let cli = Cli::parse();
+    match &cli.command {
+        Commands::List => {
+            print_licence_names_list();
+        }
+    }
     Ok(())
 }
 
@@ -61,7 +69,6 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 For more information, please refer to <https://unlicense.org>
 ";
-
         assert_eq!(
             get_license_content(unlicense_license_filepath).unwrap(),
             unlicense_license_expected_content
