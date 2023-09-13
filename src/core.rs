@@ -32,6 +32,9 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         Commands::List => {
             print_licence_names_list();
         }
+        Commands::Show { license } => {
+            println!("Show command, selected license: {}", license);
+        }
     }
     Ok(())
 }
