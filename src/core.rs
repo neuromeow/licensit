@@ -4,6 +4,8 @@ use std::fs;
 
 use crate::cli::{Cli, Commands};
 
+const LICENSES_TEMPLATES_PATH: &str = "./licenses/templates";
+
 const LICENSES_NAMES: [(&str, &str); 7] = [
     ("agpl-3.0", "GNU Affero General Public License v3.0"),
     ("apache-2.0", "Apache License 2.0"),
@@ -33,7 +35,9 @@ pub fn run() -> Result<(), Box<dyn Error>> {
             print_licence_names_list();
         }
         Commands::Show { license } => {
-            println!("Show command, selected license: {}", license);
+            let license_filepath = format!("{}/{}", LICENSES_TEMPLATES_PATH, license);
+            let license_content = get_license_content(&license_filepath).unwrap();
+            println!("{}", license_content);
         }
     }
     Ok(())
