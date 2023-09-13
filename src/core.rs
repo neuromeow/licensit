@@ -1,4 +1,5 @@
 use clap::Parser;
+use std::collections::HashMap;
 use std::error::Error;
 use std::fs;
 
@@ -22,10 +23,30 @@ fn print_licence_names_list() {
     }
 }
 
-#[allow(dead_code)]
 fn get_license_content(filepath: &str) -> Result<String, Box<dyn Error>> {
     let license_content = fs::read_to_string(filepath)?;
     Ok(license_content)
+}
+
+pub fn render_licence(
+    license_name: &str,
+    license_template: String,
+    license_author: &str,
+    license_year: &str,
+) -> String {
+    let licenses = HashMap::from([
+        ("agpl-3.0", ("<name of author>", "<year>")),
+        ("apache-2.0", ("[name of copyright owner]", "[yyyy]")),
+        ("gpl-3.0", ("<name of author>", "<year>")),
+        ("mit", ("[fullname]", "[year]")),
+    ]);
+    let license_placeholders = licenses.get(license_name).copied();
+    if let Some(placeholders) = license_placeholders {
+        let custom_license = license_template.replace(placeholders.0, license_author);
+        custom_license.replace(placeholders.1, license_year)
+    } else {
+        license_template
+    }
 }
 
 pub fn run() -> Result<(), Box<dyn Error>> {
@@ -35,12 +56,16 @@ pub fn run() -> Result<(), Box<dyn Error>> {
             print_licence_names_list();
         }
         Commands::Show { license, template } => {
+            let license_template_filepath = format!("{}/{}", LICENSES_TEMPLATES_PATH, license);
+            let license_template = get_license_content(&license_template_filepath).unwrap();
             if *template {
-                let license_filepath = format!("{}/{}", LICENSES_TEMPLATES_PATH, license);
-                let license_content = get_license_content(&license_filepath).unwrap();
-                println!("{}", license_content);
+                println!("{}", license_template);
             } else {
-                println!("Unhandled behavior.");
+                let license_name = "mit";
+                let user = "user";
+                let year = "2023";
+                let license = render_licence(license_name, license_template, user, year);
+                println!("{}", license);
             }
         }
     }
