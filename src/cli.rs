@@ -15,6 +15,8 @@ pub enum Commands {
     /// Print the content of the selected open source licenses
     Show {
         license: String,
+        #[arg(short, long)]
+        template: bool,
     },
 }
 

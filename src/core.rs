@@ -34,10 +34,14 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         Commands::List => {
             print_licence_names_list();
         }
-        Commands::Show { license } => {
-            let license_filepath = format!("{}/{}", LICENSES_TEMPLATES_PATH, license);
-            let license_content = get_license_content(&license_filepath).unwrap();
-            println!("{}", license_content);
+        Commands::Show { license, template } => {
+            if *template {
+                let license_filepath = format!("{}/{}", LICENSES_TEMPLATES_PATH, license);
+                let license_content = get_license_content(&license_filepath).unwrap();
+                println!("{}", license_content);
+            } else {
+                println!("Unhandled behavior.");
+            }
         }
     }
     Ok(())
