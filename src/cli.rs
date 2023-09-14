@@ -15,6 +15,10 @@ pub enum Commands {
     /// Print the content of the selected open source licenses
     Show {
         license: String,
+        #[arg(short, long, conflicts_with = "template")]
+        user: Option<String>,
+        #[arg(short, long, conflicts_with = "template")]
+        year: Option<u32>,
         #[arg(short, long)]
         template: bool,
     },

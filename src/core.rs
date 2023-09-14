@@ -55,7 +55,12 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         Commands::List => {
             print_licence_names_list();
         }
-        Commands::Show { license, template } => {
+        Commands::Show {
+            license,
+            user: _,
+            year: _,
+            template,
+        } => {
             let license_template_filepath = format!("{}/{}", LICENSES_TEMPLATES_PATH, license);
             let license_template = get_license_content(&license_template_filepath).unwrap();
             if *template {
