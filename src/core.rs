@@ -30,11 +30,9 @@ fn get_license_template(filepath: &str) -> Result<String, Box<dyn Error>> {
 
 pub fn render_licence(
     license_name: &str,
-    license_template: String,
+    license_template: &str,
     license_author: &str,
-    // license_author: String,
-    license_year: &str,
-    // license_year: String,
+    license_year: &u16,
 ) -> String {
     let licenses = HashMap::from([
         ("agpl-3.0", ("<name of author>", "<year>")),
@@ -45,9 +43,9 @@ pub fn render_licence(
     let license_placeholders = licenses.get(license_name).copied();
     if let Some(placeholders) = license_placeholders {
         let custom_license = license_template.replace(placeholders.0, license_author);
-        custom_license.replace(placeholders.1, license_year)
+        custom_license.replace(placeholders.1, license_year.to_string().as_str())
     } else {
-        license_template
+        license_template.to_string()
     }
 }
 
@@ -73,9 +71,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
                 } else {
                     "user"
                 };
-                let license_year = if let Some(year) = year { year } else { "2023" };
-                let license =
-                    render_licence(license, license_template, license_author, license_year);
+                let license = render_licence(license, &license_template, license_author, year);
                 println!("{}", license);
             }
         }
