@@ -1,5 +1,6 @@
 mod cli;
 mod core;
+mod util;
 
 fn main() {
     if let Err(error) = core::run() {
