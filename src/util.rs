@@ -2,6 +2,8 @@ use std::collections::HashMap;
 use std::error::Error;
 use std::fs;
 
+const LICENSES_TEMPLATES_PATH: &str = "./licenses/templates";
+
 const LICENSES_NAMES: [(&str, &str); 7] = [
     ("agpl-3.0", "GNU Affero General Public License v3.0"),
     ("apache-2.0", "Apache License 2.0"),
@@ -18,9 +20,10 @@ pub fn print_licence_names_list() {
     }
 }
 
-pub fn get_license_template(filepath: &str) -> Result<String, Box<dyn Error>> {
-    let license_content = fs::read_to_string(filepath)?;
-    Ok(license_content)
+pub fn get_license_template(license_name: &str) -> Result<String, Box<dyn Error>> {
+    let license_template_filepath = format!("{}/{}", LICENSES_TEMPLATES_PATH, license_name);
+    let license_template = fs::read_to_string(license_template_filepath)?;
+    Ok(license_template)
 }
 
 pub fn render_licence(
@@ -49,9 +52,8 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_get_license_content() {
-        let unlicense_license_filepath = "./licenses/templates/unlicense";
-        let unlicense_license_expected_content =
+    fn test_get_license_template() {
+        let unlicense_license_template_expected_content =
             "This is free and unencumbered software released into the public domain.
 
 Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -78,8 +80,8 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <https://unlicense.org>
 ";
         assert_eq!(
-            get_license_template(unlicense_license_filepath).unwrap(),
-            unlicense_license_expected_content
+            get_license_template("unlicense").unwrap(),
+            unlicense_license_template_expected_content
         );
     }
 }

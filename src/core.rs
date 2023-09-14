@@ -4,8 +4,6 @@ use std::error::Error;
 use crate::cli::{Cli, Commands};
 use crate::util::*;
 
-const LICENSES_TEMPLATES_PATH: &str = "./licenses/templates";
-
 pub fn run() -> Result<(), Box<dyn Error>> {
     let cli = Cli::parse();
     match &cli.command {
@@ -18,8 +16,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
             year,
             template,
         } => {
-            let license_template_filepath = format!("{}/{}", LICENSES_TEMPLATES_PATH, license);
-            let license_template = get_license_template(&license_template_filepath).unwrap();
+            let license_template = get_license_template(license).unwrap();
             if *template {
                 println!("{}", license_template);
             } else {
