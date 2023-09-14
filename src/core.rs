@@ -23,7 +23,7 @@ fn print_licence_names_list() {
     }
 }
 
-fn get_license_content(filepath: &str) -> Result<String, Box<dyn Error>> {
+fn get_license_template(filepath: &str) -> Result<String, Box<dyn Error>> {
     let license_content = fs::read_to_string(filepath)?;
     Ok(license_content)
 }
@@ -32,7 +32,9 @@ pub fn render_licence(
     license_name: &str,
     license_template: String,
     license_author: &str,
+    // license_author: String,
     license_year: &str,
+    // license_year: String,
 ) -> String {
     let licenses = HashMap::from([
         ("agpl-3.0", ("<name of author>", "<year>")),
@@ -57,19 +59,23 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         }
         Commands::Show {
             license,
-            user: _,
-            year: _,
+            user,
+            year,
             template,
         } => {
             let license_template_filepath = format!("{}/{}", LICENSES_TEMPLATES_PATH, license);
-            let license_template = get_license_content(&license_template_filepath).unwrap();
+            let license_template = get_license_template(&license_template_filepath).unwrap();
             if *template {
                 println!("{}", license_template);
             } else {
-                let license_name = "mit";
-                let user = "user";
-                let year = "2023";
-                let license = render_licence(license_name, license_template, user, year);
+                let license_author = if let Some(author) = user {
+                    author
+                } else {
+                    "user"
+                };
+                let license_year = if let Some(year) = year { year } else { "2023" };
+                let license =
+                    render_licence(license, license_template, license_author, license_year);
                 println!("{}", license);
             }
         }
@@ -111,7 +117,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <https://unlicense.org>
 ";
         assert_eq!(
-            get_license_content(unlicense_license_filepath).unwrap(),
+            get_license_template(unlicense_license_filepath).unwrap(),
             unlicense_license_expected_content
         );
     }

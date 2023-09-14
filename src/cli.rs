@@ -18,7 +18,7 @@ pub enum Commands {
         #[arg(short, long, conflicts_with = "template")]
         user: Option<String>,
         #[arg(short, long, conflicts_with = "template")]
-        year: Option<u32>,
+        year: Option<String>,
         #[arg(short, long)]
         template: bool,
     },
