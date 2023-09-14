@@ -23,16 +23,16 @@ fn print_licence_names_list() {
     }
 }
 
-fn get_license_content(filepath: &str) -> Result<String, Box<dyn Error>> {
+fn get_license_template(filepath: &str) -> Result<String, Box<dyn Error>> {
     let license_content = fs::read_to_string(filepath)?;
     Ok(license_content)
 }
 
 pub fn render_licence(
     license_name: &str,
-    license_template: String,
+    license_template: &str,
     license_author: &str,
-    license_year: &str,
+    license_year: &u16,
 ) -> String {
     let licenses = HashMap::from([
         ("agpl-3.0", ("<name of author>", "<year>")),
@@ -43,9 +43,9 @@ pub fn render_licence(
     let license_placeholders = licenses.get(license_name).copied();
     if let Some(placeholders) = license_placeholders {
         let custom_license = license_template.replace(placeholders.0, license_author);
-        custom_license.replace(placeholders.1, license_year)
+        custom_license.replace(placeholders.1, license_year.to_string().as_str())
     } else {
-        license_template
+        license_template.to_string()
     }
 }
 
@@ -55,16 +55,23 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         Commands::List => {
             print_licence_names_list();
         }
-        Commands::Show { license, template } => {
+        Commands::Show {
+            license,
+            user,
+            year,
+            template,
+        } => {
             let license_template_filepath = format!("{}/{}", LICENSES_TEMPLATES_PATH, license);
-            let license_template = get_license_content(&license_template_filepath).unwrap();
+            let license_template = get_license_template(&license_template_filepath).unwrap();
             if *template {
                 println!("{}", license_template);
             } else {
-                let license_name = "mit";
-                let user = "user";
-                let year = "2023";
-                let license = render_licence(license_name, license_template, user, year);
+                let license_author = if let Some(author) = user {
+                    author
+                } else {
+                    "user"
+                };
+                let license = render_licence(license, &license_template, license_author, year);
                 println!("{}", license);
             }
         }
@@ -106,7 +113,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <https://unlicense.org>
 ";
         assert_eq!(
-            get_license_content(unlicense_license_filepath).unwrap(),
+            get_license_template(unlicense_license_filepath).unwrap(),
             unlicense_license_expected_content
         );
     }
