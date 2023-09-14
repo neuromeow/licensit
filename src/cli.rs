@@ -1,3 +1,4 @@
+use chrono::Datelike;
 use clap::{Parser, Subcommand};
 
 /// Console application for working with open source licenses
@@ -12,6 +13,16 @@ pub struct Cli {
 pub enum Commands {
     /// Print a list of available open source licenses
     List,
+    /// Print the content of the selected open source licenses
+    Show {
+        license: String,
+        #[arg(short, long, conflicts_with = "template")]
+        user: Option<String>,
+        #[arg(short, long, default_value_t = chrono::Utc::now().year() as u16, conflicts_with = "template")]
+        year: u16,
+        #[arg(short, long)]
+        template: bool,
+    },
 }
 
 #[cfg(test)]
