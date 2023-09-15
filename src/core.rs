@@ -29,6 +29,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
                 println!("{}", license);
             }
         }
+        Commands::Add { .. } => todo!(),
     }
     Ok(())
 }

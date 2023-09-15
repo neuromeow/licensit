@@ -23,6 +23,13 @@ pub enum Commands {
         #[arg(short, long)]
         template: bool,
     },
+    Add {
+        license: String,
+        #[arg(short, long)]
+        user: Option<String>,
+        #[arg(short, long, default_value_t = chrono::Utc::now().year() as u16)]
+        year: u16,
+    },
 }
 
 #[cfg(test)]
