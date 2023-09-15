@@ -16,12 +16,19 @@ pub enum Commands {
     /// Print the content of the selected open source licenses
     Show {
         license: String,
-        #[arg(short, long, conflicts_with = "template")]
-        user: Option<String>,
+        #[arg(short, long, default_value_t = String::from("user"), conflicts_with = "template")]
+        user: String,
         #[arg(short, long, default_value_t = chrono::Utc::now().year() as u16, conflicts_with = "template")]
         year: u16,
         #[arg(short, long)]
         template: bool,
+    },
+    Add {
+        license: String,
+        #[arg(short, long, default_value_t = String::from("user"))]
+        user: String,
+        #[arg(short, long, default_value_t = chrono::Utc::now().year() as u16)]
+        year: u16,
     },
 }
 
