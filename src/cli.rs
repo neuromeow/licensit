@@ -1,5 +1,6 @@
 use chrono::Datelike;
 use clap::{Parser, Subcommand};
+use std::env;
 
 /// Console application for working with open source licenses
 #[derive(Parser)]
@@ -33,7 +34,12 @@ pub enum Commands {
 }
 
 fn get_user() -> String {
-    "user".to_string()
+    let license_author_name = env::var("LICENSE_AUTHOR_NAME");
+    if let Ok(name) = license_author_name {
+        name
+    } else {
+        "user".to_string()
+    }
 }
 
 #[cfg(test)]
