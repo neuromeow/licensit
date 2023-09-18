@@ -48,7 +48,7 @@ fn get_user() -> Result<String, Box<dyn Error>> {
             let name = gitconfig.get("user", "name").unwrap();
             Ok(name)
         } else {
-            Ok("user".to_string())
+            Ok(whoami::username())
         }
     }
 }
