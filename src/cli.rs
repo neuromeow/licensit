@@ -21,7 +21,7 @@ pub enum Commands {
     Show {
         #[arg(value_parser = LICENSES_ABBREVIATIONS)]
         license: String,
-        #[arg(short, long, default_value_t = get_user(), conflicts_with = "template")]
+        #[arg(short, long, default_value_t = determine_license_author(), conflicts_with = "template")]
         user: String,
         #[arg(short, long, default_value_t = chrono::Utc::now().year() as u16, conflicts_with = "template")]
         year: u16,
@@ -29,15 +29,16 @@ pub enum Commands {
         template: bool,
     },
     Add {
+        #[arg(value_parser = LICENSES_ABBREVIATIONS)]
         license: String,
-        #[arg(short, long, default_value_t = get_user())]
+        #[arg(short, long, default_value_t = determine_license_author())]
         user: String,
         #[arg(short, long, default_value_t = chrono::Utc::now().year() as u16)]
         year: u16,
     },
 }
 
-fn get_user() -> String {
+fn determine_license_author() -> String {
     let license_author_name_result = env::var("LICENSE_AUTHOR_NAME");
     if let Ok(license_author_name) = license_author_name_result {
         license_author_name
