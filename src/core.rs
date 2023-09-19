@@ -18,12 +18,11 @@ pub fn run() -> Result<(), Box<dyn Error>> {
             year,
             template,
         } => {
-            // let license_template = get_license_template(license).unwrap();
-            let license_template = get_license_template(license);
+            let license_template = fetch_license_template(license);
             if *template {
                 println!("{}", license_template);
             } else {
-                let license = render_licence(license, &license_template, user, year);
+                let license = render_licence(license, license_template, user, year);
                 println!("{}", license);
             }
         }
@@ -32,9 +31,8 @@ pub fn run() -> Result<(), Box<dyn Error>> {
             user,
             year,
         } => {
-            // let license_template = get_license_template(license).unwrap();
-            let license_template = get_license_template(license);
-            let license = render_licence(license, &license_template, user, year);
+            let license_template = fetch_license_template(license);
+            let license = render_licence(license, license_template, user, year);
             let mut license_file = File::create("LICENSE")?;
             license_file.write_all(license.as_bytes())?;
         }

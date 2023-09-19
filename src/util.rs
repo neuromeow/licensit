@@ -31,11 +31,13 @@ pub fn print_licence_names_list() {
     }
 }
 
-pub fn get_license_template(license_name: &str) -> String {
-    let license_template_filepath = format!("templates/{}", license_name);
-    let license_template_file = LICENSES_DIR.get_file(license_template_filepath).unwrap();
+pub fn fetch_license_template(license_name: &str) -> &str {
+    let license_template_relative_path = format!("templates/{}", license_name);
+    let license_template_file = LICENSES_DIR
+        .get_file(license_template_relative_path)
+        .unwrap();
     let license_template = license_template_file.contents_utf8().unwrap();
-    license_template.to_string()
+    license_template
 }
 
 pub fn render_licence(
@@ -44,16 +46,16 @@ pub fn render_licence(
     license_author: &str,
     license_year: &u16,
 ) -> String {
-    let licenses = HashMap::from([
+    let licenses_placeholders = HashMap::from([
         ("agpl-3.0", ("<name of author>", "<year>")),
         ("apache-2.0", ("[name of copyright owner]", "[yyyy]")),
         ("gpl-3.0", ("<name of author>", "<year>")),
         ("mit", ("[fullname]", "[year]")),
     ]);
-    let license_placeholders = licenses.get(license_name).copied();
+    let license_placeholders = licenses_placeholders.get(license_name).copied();
     if let Some(placeholders) = license_placeholders {
-        let custom_license = license_template.replace(placeholders.0, license_author);
-        custom_license.replace(placeholders.1, license_year.to_string().as_str())
+        let license = license_template.replace(placeholders.0, license_author);
+        license.replace(placeholders.1, license_year.to_string().as_str())
     } else {
         license_template.to_string()
     }
@@ -64,7 +66,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_get_license_template() {
+    fn test_fetch_license_template() {
         let unlicense_license_template_expected_content =
             "This is free and unencumbered software released into the public domain.
 
@@ -92,7 +94,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <https://unlicense.org>
 ";
         assert_eq!(
-            get_license_template("unlicense"),
+            fetch_license_template("unlicense"),
             unlicense_license_template_expected_content
         );
     }
