@@ -1,8 +1,7 @@
+use include_dir::{include_dir, Dir};
 use std::collections::HashMap;
-use std::error::Error;
-use std::fs;
 
-const LICENSES_TEMPLATES_PATH: &str = "./licenses/templates";
+static LICENSES_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/licenses");
 
 const LICENSES_NAMES: [(&str, &str); 7] = [
     ("agpl-3.0", "GNU Affero General Public License v3.0"),
@@ -20,10 +19,11 @@ pub fn print_licence_names_list() {
     }
 }
 
-pub fn get_license_template(license_name: &str) -> Result<String, Box<dyn Error>> {
-    let license_template_filepath = format!("{}/{}", LICENSES_TEMPLATES_PATH, license_name);
-    let license_template = fs::read_to_string(license_template_filepath)?;
-    Ok(license_template)
+pub fn get_license_template(license_name: &str) -> String {
+    let license_template_filepath = format!("templates/{}", license_name);
+    let license_template_file = LICENSES_DIR.get_file(license_template_filepath).unwrap();
+    let license_template = license_template_file.contents_utf8().unwrap();
+    license_template.to_string()
 }
 
 pub fn render_licence(
@@ -80,7 +80,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <https://unlicense.org>
 ";
         assert_eq!(
-            get_license_template("unlicense").unwrap(),
+            get_license_template("unlicense"),
             unlicense_license_template_expected_content
         );
     }

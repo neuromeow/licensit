@@ -9,4 +9,5 @@ edition = "2021"
 clap = { version = "4.4.2", features = ["derive"] }
 chrono = "0.4.30"
 configparser = "3.0.2"
+include_dir = "0.7.3"
 whoami = "1.4.1"
