@@ -3,18 +3,30 @@ use std::collections::HashMap;
 
 static LICENSES_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/licenses");
 
-const LICENSES_NAMES: [(&str, &str); 7] = [
-    ("agpl-3.0", "GNU Affero General Public License v3.0"),
-    ("apache-2.0", "Apache License 2.0"),
-    ("gpl-3.0", "GNU General Public License v3.0"),
-    ("lgpl-3.0", "GNU Lesser General Public License v3.0"),
-    ("mit", "MIT License"),
-    ("mpl-2.0", "Mozilla Public License 2.0"),
-    ("unlicense", "The Unlicense"),
+const LICENSES_ABBREVIATION: [&str; 7] = [
+    "agpl-3.0",
+    "apache-2.0",
+    "gpl-3.0",
+    "lgpl-3.0",
+    "mit",
+    "mpl-2.0",
+    "unlicense",
+];
+
+const LICENSES_NAMES: [&str; 7] = [
+    "GNU Affero General Public License v3.0",
+    "Apache License 2.0",
+    "GNU General Public License v3.0",
+    "GNU Lesser General Public License v3.0",
+    "MIT License",
+    "Mozilla Public License 2.0",
+    "The Unlicense",
 ];
 
 pub fn print_licence_names_list() {
-    for (license_abbreviation, license_name) in LICENSES_NAMES {
+    for (license_abbreviation, license_name) in
+        LICENSES_ABBREVIATION.into_iter().zip(LICENSES_NAMES)
+    {
         println!("{license_abbreviation: <15} {license_name}");
     }
 }
