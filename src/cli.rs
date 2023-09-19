@@ -3,6 +3,8 @@ use clap::{Parser, Subcommand};
 use configparser::ini::Ini;
 use std::env;
 
+use crate::util::LICENSES_ABBREVIATIONS;
+
 /// Console application for working with open source licenses
 #[derive(Parser)]
 #[command(version)]
@@ -17,6 +19,7 @@ pub enum Commands {
     List,
     /// Print the content of the selected open source licenses
     Show {
+        #[arg(value_parser = LICENSES_ABBREVIATIONS)]
         license: String,
         #[arg(short, long, default_value_t = get_user(), conflicts_with = "template")]
         user: String,
