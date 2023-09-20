@@ -15,24 +15,32 @@ pub struct Cli {
 
 #[derive(Subcommand)]
 pub enum Commands {
-    /// Print a list of available open source licenses
+    /// Print a list of all available licenses
     List,
-    /// Print the content of the selected open source licenses
+    /// Print the content of the selected license
     Show {
+        /// Selected license
         #[arg(value_parser = LICENSES_ABBREVIATIONS)]
         license: String,
+        /// The user or organization who holds the license
         #[arg(short, long, default_value_t = determine_license_author(), conflicts_with = "template")]
         user: String,
+        /// The year the license is in effect
         #[arg(short, long, default_value_t = chrono::Utc::now().year() as u16, conflicts_with = "template")]
         year: u16,
+        /// License template only, no fillers for user or organization and year
         #[arg(short, long)]
         template: bool,
     },
+    /// Add the selected license to the current directory
     Add {
+        /// Selected license
         #[arg(value_parser = LICENSES_ABBREVIATIONS)]
         license: String,
+        /// The user or organization who holds the license
         #[arg(short, long, default_value_t = determine_license_author())]
         user: String,
+        /// The year the license is in effect
         #[arg(short, long, default_value_t = chrono::Utc::now().year() as u16)]
         year: u16,
     },
