@@ -33,6 +33,8 @@ pub fn print_licence_names_list() {
 
 pub fn fetch_license_template(license_name: &str) -> &str {
     let license_template_relative_path = format!("templates/{}", license_name);
+    // It is necessary that there are license template files with names
+    // that are present in the list with abbreviations of available licenses.
     let license_template_file = LICENSES_DIR
         .get_file(license_template_relative_path)
         .unwrap();
@@ -46,6 +48,7 @@ pub fn render_licence(
     license_author: &str,
     license_year: &u16,
 ) -> String {
+    // Not all available licenses have placeholders.
     let licenses_placeholders = HashMap::from([
         ("agpl-3.0", ("<name of author>", "<year>")),
         ("apache-2.0", ("[name of copyright owner]", "[yyyy]")),
