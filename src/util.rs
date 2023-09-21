@@ -23,12 +23,16 @@ const LICENSES_NAMES: [&str; 7] = [
     "The Unlicense",
 ];
 
-pub fn print_licence_names_list() {
+pub fn render_licences_list() -> String {
+    let mut licences_list = String::new();
     for (license_abbreviation, license_name) in
         LICENSES_ABBREVIATIONS.into_iter().zip(LICENSES_NAMES)
     {
-        println!("{license_abbreviation: <15} {license_name}");
+        let licence_names = format!("{: <15}{}\n", license_abbreviation, license_name);
+        licences_list.push_str(licence_names.as_str());
     }
+    licences_list.pop();
+    licences_list
 }
 
 pub fn fetch_license_template(license_name: &str) -> &str {
