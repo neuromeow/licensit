@@ -1,7 +1,7 @@
 use assert_cmd::Command;
 use chrono::Datelike;
 
-const UNLICENSE_LICENSE_CONTENT: &str =
+const UNLICENSE_LICENSE: &str =
     "This is free and unencumbered software released into the public domain.
 
 Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -29,9 +29,9 @@ For more information, please refer to <https://unlicense.org>
 
 ";
 
-const MIT_LICENSE_CONTENT_EXAMPLE: &str = "MIT License
+const MIT_LICENSE_TEMPLATE: &str = "MIT License
 
-Copyright (c) [year] license_author_example
+Copyright (c) [year] [fullname]
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the \"Software\"), to deal
@@ -52,6 +52,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 ";
+
+fn render_mit_license_with_fillers(
+    fullname_filler: Option<&str>,
+    year_filler: Option<&str>,
+) -> String {
+    let mut mit_license_with_fillers = String::from(MIT_LICENSE_TEMPLATE);
+    if let Some(filler) = fullname_filler {
+        mit_license_with_fillers = mit_license_with_fillers.replace("[fullname]", filler);
+    };
+    if let Some(filler) = year_filler {
+        mit_license_with_fillers = mit_license_with_fillers.replace("[year]", filler);
+    } else {
+        let current_year = chrono::Utc::now().year().to_string();
+        mit_license_with_fillers =
+            mit_license_with_fillers.replace("[year]", current_year.as_str());
+    };
+    mit_license_with_fillers
+}
 
 fn create_licensit_show_command() -> Command {
     let mut licensit_show_command = Command::cargo_bin("licensit").unwrap();
@@ -81,7 +99,7 @@ fn test_licensit_show_for_license_without_placeholders() {
     create_licensit_show_command()
         .arg("unlicense")
         .assert()
-        .stdout(UNLICENSE_LICENSE_CONTENT);
+        .stdout(UNLICENSE_LICENSE);
 }
 
 #[test]
@@ -90,7 +108,7 @@ fn test_licensit_show_with_env_variable_for_license_without_placeholders() {
         .arg("unlicense")
         .env("LICENSE_AUTHOR_NAME", "license_author_env_variable")
         .assert()
-        .stdout(UNLICENSE_LICENSE_CONTENT);
+        .stdout(UNLICENSE_LICENSE);
 }
 
 #[test]
@@ -99,7 +117,7 @@ fn test_licensit_show_with_user_option_for_license_without_placeholders() {
         .arg("unlicense")
         .arg("--user=license_author")
         .assert()
-        .stdout(UNLICENSE_LICENSE_CONTENT);
+        .stdout(UNLICENSE_LICENSE);
 }
 
 #[test]
@@ -109,7 +127,7 @@ fn test_licensit_show_with_user_option_and_env_variable_for_license_without_plac
         .arg("--user=license_author")
         .env("LICENSE_AUTHOR_NAME", "license_author_env_variable")
         .assert()
-        .stdout(UNLICENSE_LICENSE_CONTENT);
+        .stdout(UNLICENSE_LICENSE);
 }
 
 #[test]
@@ -118,7 +136,7 @@ fn test_licensit_show_with_year_option_for_license_without_placeholders() {
         .arg("unlicense")
         .arg("--year=2023")
         .assert()
-        .stdout(UNLICENSE_LICENSE_CONTENT);
+        .stdout(UNLICENSE_LICENSE);
 }
 
 #[test]
@@ -128,7 +146,7 @@ fn test_licensit_show_with_user_and_year_options_for_license_without_placeholder
         .arg("--user=license_author")
         .arg("--year=2023")
         .assert()
-        .stdout(UNLICENSE_LICENSE_CONTENT);
+        .stdout(UNLICENSE_LICENSE);
 }
 
 #[test]
@@ -137,7 +155,7 @@ fn test_licensit_show_with_template_option_for_license_without_placeholders() {
         .arg("unlicense")
         .arg("--template")
         .assert()
-        .stdout(UNLICENSE_LICENSE_CONTENT);
+        .stdout(UNLICENSE_LICENSE);
 }
 
 #[test]
@@ -174,37 +192,46 @@ fn test_licensit_show_with_all_options_for_license_without_placeholders() {
 #[test]
 fn test_licensit_show_with_env_variable_for_license_with_placeholders() {
     let license_author_name_env_variable = "license_author_env_variable";
-    let current_year = chrono::Utc::now().year().to_string();
     create_licensit_show_command()
         .arg("mit")
-        .env("LICENSE_AUTHOR_NAME", "license_author_env_variable")
+        .env("LICENSE_AUTHOR_NAME", license_author_name_env_variable)
         .assert()
-        .stdout(
-            MIT_LICENSE_CONTENT_EXAMPLE
-                .replace("license_author_example", license_author_name_env_variable)
-                .replace("[year]", current_year.as_str()),
-        );
+        .stdout(render_mit_license_with_fillers(
+            Some(license_author_name_env_variable),
+            None,
+        ));
 }
 
 #[test]
 fn test_licensit_show_with_user_option_for_license_with_placeholders() {
-    let current_year = chrono::Utc::now().year().to_string();
+    let license_author_example = "license_author_example";
+    let user_option_with_license_author_example_value =
+        format!("--user={}", license_author_example);
     create_licensit_show_command()
         .arg("mit")
-        .arg("--user=license_author_example")
+        .arg(user_option_with_license_author_example_value)
         .assert()
-        .stdout(MIT_LICENSE_CONTENT_EXAMPLE.replace("[year]", current_year.as_str()));
+        .stdout(render_mit_license_with_fillers(
+            Some(license_author_example),
+            None,
+        ));
 }
 
 #[test]
 fn test_licensit_show_with_user_option_and_env_variable_for_license_with_placeholders() {
-    let current_year = chrono::Utc::now().year().to_string();
+    let license_author_example = "license_author_example";
+    let user_option_with_license_author_example_value =
+        format!("--user={}", license_author_example);
+    let license_author_name_env_variable = "license_author_env_variable";
     create_licensit_show_command()
         .arg("mit")
-        .arg("--user=license_author_example")
-        .env("LICENSE_AUTHOR_NAME", "license_author_env_variable")
+        .arg(user_option_with_license_author_example_value)
+        .env("LICENSE_AUTHOR_NAME", license_author_name_env_variable)
         .assert()
-        .stdout(MIT_LICENSE_CONTENT_EXAMPLE.replace("[year]", current_year.as_str()));
+        .stdout(render_mit_license_with_fillers(
+            Some(license_author_example),
+            None,
+        ));
 }
 
 #[test]
@@ -215,38 +242,50 @@ fn test_licensit_show_with_year_option_and_env_variable_for_license_with_placeho
     create_licensit_show_command()
         .arg("mit")
         .arg(year_option_with_year_example_value)
-        .env("LICENSE_AUTHOR_NAME", "license_author_env_variable")
+        .env("LICENSE_AUTHOR_NAME", license_author_name_env_variable)
         .assert()
-        .stdout(
-            MIT_LICENSE_CONTENT_EXAMPLE
-                .replace("license_author_example", license_author_name_env_variable)
-                .replace("[year]", year_example),
-        );
+        .stdout(render_mit_license_with_fillers(
+            Some(license_author_name_env_variable),
+            Some(year_example),
+        ));
 }
 
 #[test]
 fn test_licensit_show_with_user_and_year_options_for_license_with_placeholders() {
+    let license_author_example = "license_author_example";
+    let user_option_with_license_author_example_value =
+        format!("--user={}", license_author_example);
     let year_example = "2023";
     let year_option_with_year_example_value = format!("--year={}", year_example);
     create_licensit_show_command()
         .arg("mit")
-        .arg("--user=license_author_example")
+        .arg(user_option_with_license_author_example_value)
         .arg(year_option_with_year_example_value)
         .assert()
-        .stdout(MIT_LICENSE_CONTENT_EXAMPLE.replace("[year]", year_example));
+        .stdout(render_mit_license_with_fillers(
+            Some(license_author_example),
+            Some(year_example),
+        ));
 }
 
 #[test]
 fn test_licensit_show_with_user_and_year_options_and_env_variable_for_license_with_placeholders() {
+    let license_author_example = "license_author_example";
+    let user_option_with_license_author_example_value =
+        format!("--user={}", license_author_example);
     let year_example = "2023";
     let year_option_with_year_example_value = format!("--year={}", year_example);
+    let license_author_name_env_variable = "license_author_env_variable";
     create_licensit_show_command()
         .arg("mit")
-        .arg("--user=license_author_example")
+        .arg(user_option_with_license_author_example_value)
         .arg(year_option_with_year_example_value)
-        .env("LICENSE_AUTHOR_NAME", "license_author_env_variable")
+        .env("LICENSE_AUTHOR_NAME", license_author_name_env_variable)
         .assert()
-        .stdout(MIT_LICENSE_CONTENT_EXAMPLE.replace("[year]", year_example));
+        .stdout(render_mit_license_with_fillers(
+            Some(license_author_example),
+            Some(year_example),
+        ));
 }
 
 #[test]
@@ -255,5 +294,5 @@ fn test_licensit_show_with_template_option_for_license_with_placeholders() {
         .arg("mit")
         .arg("--template")
         .assert()
-        .stdout(MIT_LICENSE_CONTENT_EXAMPLE.replace("license_author_example", "[fullname]"));
+        .stdout(MIT_LICENSE_TEMPLATE);
 }
