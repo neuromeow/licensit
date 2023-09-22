@@ -1,5 +1,8 @@
 use assert_cmd::Command;
 use chrono::Datelike;
+use serial_test::serial;
+use std::fs;
+use std::io::Write;
 
 const UNLICENSE_LICENSE: &str =
     "This is free and unencumbered software released into the public domain.
@@ -71,10 +74,33 @@ fn render_mit_license_with_fillers(
     mit_license_with_fillers
 }
 
+fn read_project_license() -> Result<String, Box<dyn std::error::Error>> {
+    let project_license = fs::read_to_string("LICENSE")?;
+    Ok(project_license)
+}
+
+fn overwrite_project_license(
+    project_license_content: String,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let mut project_license = fs::OpenOptions::new()
+        .write(true)
+        .truncate(true)
+        .open("LICENSE")?;
+    project_license.write(project_license_content.as_bytes())?;
+    project_license.flush()?;
+    Ok(())
+}
+
 fn create_licensit_show_command() -> Command {
     let mut licensit_show_command = Command::cargo_bin("licensit").unwrap();
     licensit_show_command.arg("show");
     licensit_show_command
+}
+
+fn create_licensit_add_command() -> Command {
+    let mut licensit_add_command = Command::cargo_bin("licensit").unwrap();
+    licensit_add_command.arg("add");
+    licensit_add_command
 }
 
 #[test]
@@ -295,4 +321,139 @@ fn test_licensit_show_with_template_option_for_license_with_placeholders() {
         .arg("--template")
         .assert()
         .stdout(MIT_LICENSE_TEMPLATE);
+}
+
+#[test]
+#[serial]
+fn test_licensit_add_with_env_variable_for_license_with_placeholders() {
+    let original_project_license = read_project_license().unwrap();
+    let license_author_name_env_variable = "license_author_env_variable";
+    create_licensit_add_command()
+        .arg("mit")
+        .env("LICENSE_AUTHOR_NAME", license_author_name_env_variable)
+        .assert()
+        .success();
+    let mut modified_project_license = read_project_license().unwrap();
+    modified_project_license.push('\n');
+    overwrite_project_license(original_project_license).unwrap();
+    assert_eq!(
+        modified_project_license,
+        render_mit_license_with_fillers(Some(license_author_name_env_variable), None)
+    );
+}
+
+#[test]
+#[serial]
+fn test_licensit_add_with_user_option_for_license_with_placeholders() {
+    let original_project_license = read_project_license().unwrap();
+    let license_author_example = "license_author_example";
+    let user_option_with_license_author_example_value =
+        format!("--user={}", license_author_example);
+    create_licensit_add_command()
+        .arg("mit")
+        .arg(user_option_with_license_author_example_value)
+        .assert()
+        .success();
+    let mut modified_project_license = read_project_license().unwrap();
+    modified_project_license.push('\n');
+    overwrite_project_license(original_project_license).unwrap();
+    assert_eq!(
+        modified_project_license,
+        render_mit_license_with_fillers(Some(license_author_example), None)
+    );
+}
+
+#[test]
+#[serial]
+fn test_licensit_add_with_user_option_and_env_variable_for_license_with_placeholders() {
+    let original_project_license = read_project_license().unwrap();
+    let license_author_example = "license_author_example";
+    let user_option_with_license_author_example_value =
+        format!("--user={}", license_author_example);
+    let license_author_name_env_variable = "license_author_env_variable";
+    create_licensit_add_command()
+        .arg("mit")
+        .arg(user_option_with_license_author_example_value)
+        .env("LICENSE_AUTHOR_NAME", license_author_name_env_variable)
+        .assert()
+        .success();
+    let mut modified_project_license = read_project_license().unwrap();
+    modified_project_license.push('\n');
+    overwrite_project_license(original_project_license).unwrap();
+    assert_eq!(
+        modified_project_license,
+        render_mit_license_with_fillers(Some(license_author_example), None)
+    );
+}
+
+#[test]
+#[serial]
+fn test_licensit_add_with_year_option_and_env_variable_for_license_with_placeholders() {
+    let original_project_license = read_project_license().unwrap();
+    let license_author_name_env_variable = "license_author_env_variable";
+    let year_example = "2023";
+    let year_option_with_year_example_value = format!("--year={}", year_example);
+    create_licensit_add_command()
+        .arg("mit")
+        .arg(year_option_with_year_example_value)
+        .env("LICENSE_AUTHOR_NAME", license_author_name_env_variable)
+        .assert()
+        .success();
+    let mut modified_project_license = read_project_license().unwrap();
+    modified_project_license.push('\n');
+    overwrite_project_license(original_project_license).unwrap();
+    assert_eq!(
+        modified_project_license,
+        render_mit_license_with_fillers(Some(license_author_name_env_variable), Some(year_example))
+    );
+}
+
+#[test]
+#[serial]
+fn test_licensit_add_with_user_and_year_options_for_license_with_placeholders() {
+    let original_project_license = read_project_license().unwrap();
+    let license_author_example = "license_author_example";
+    let user_option_with_license_author_example_value =
+        format!("--user={}", license_author_example);
+    let year_example = "2023";
+    let year_option_with_year_example_value = format!("--year={}", year_example);
+    create_licensit_add_command()
+        .arg("mit")
+        .arg(user_option_with_license_author_example_value)
+        .arg(year_option_with_year_example_value)
+        .assert()
+        .success();
+    let mut modified_project_license = read_project_license().unwrap();
+    modified_project_license.push('\n');
+    overwrite_project_license(original_project_license).unwrap();
+    assert_eq!(
+        modified_project_license,
+        render_mit_license_with_fillers(Some(license_author_example), Some(year_example))
+    );
+}
+
+#[test]
+#[serial]
+fn test_licensit_add_with_user_and_year_options_and_env_for_license_with_placeholders() {
+    let original_project_license = read_project_license().unwrap();
+    let license_author_example = "license_author_example";
+    let user_option_with_license_author_example_value =
+        format!("--user={}", license_author_example);
+    let year_example = "2023";
+    let year_option_with_year_example_value = format!("--year={}", year_example);
+    let license_author_name_env_variable = "license_author_env_variable";
+    create_licensit_add_command()
+        .arg("mit")
+        .arg(user_option_with_license_author_example_value)
+        .arg(year_option_with_year_example_value)
+        .env("LICENSE_AUTHOR_NAME", license_author_name_env_variable)
+        .assert()
+        .success();
+    let mut modified_project_license = read_project_license().unwrap();
+    modified_project_license.push('\n');
+    overwrite_project_license(original_project_license).unwrap();
+    assert_eq!(
+        modified_project_license,
+        render_mit_license_with_fillers(Some(license_author_example), Some(year_example))
+    );
 }
