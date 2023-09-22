@@ -1,4 +1,5 @@
 use assert_cmd::Command;
+use chrono::Datelike;
 
 const UNLICENSE_LICENSE_CONTENT: &str =
     "This is free and unencumbered software released into the public domain.
@@ -149,4 +150,35 @@ fn test_licensit_show_with_all_options_for_license_without_placeholders() {
         .arg("--template")
         .assert()
         .failure();
+}
+
+#[test]
+fn test_licensit_show_with_user_option_for_license_with_placeholders() {
+    let current_year = chrono::Utc::now().year().to_string();
+    create_licensit_show_command()
+        .arg("mit")
+        .arg("--user=example_license_author")
+        .assert()
+        .stdout(MIT_LICENSE_EXAMPLE_CONTENT.replace("[year]", current_year.as_str()));
+}
+
+#[test]
+fn test_licensit_show_with_user_and_year_options_for_license_with_placeholders() {
+    let year_example = "2023";
+    let year_option_with_year_example_value = format!("--year={}", year_example);
+    create_licensit_show_command()
+        .arg("mit")
+        .arg("--user=example_license_author")
+        .arg(year_option_with_year_example_value)
+        .assert()
+        .stdout(MIT_LICENSE_EXAMPLE_CONTENT.replace("[year]", year_example));
+}
+
+#[test]
+fn test_licensit_show_with_template_option_for_license_with_placeholders() {
+    create_licensit_show_command()
+        .arg("mit")
+        .arg("--template")
+        .assert()
+        .stdout(MIT_LICENSE_EXAMPLE_CONTENT.replace("example_license_author", "[fullname]"));
 }
