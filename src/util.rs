@@ -59,8 +59,8 @@ pub fn render_licence(
         ("gpl-3.0", ("<name of author>", "<year>")),
         ("mit", ("[fullname]", "[year]")),
     ]);
-    let license_placeholders = licenses_placeholders.get(license_name).copied();
-    if let Some(placeholders) = license_placeholders {
+    let license_placeholders_option = licenses_placeholders.get(license_name).copied();
+    if let Some(placeholders) = license_placeholders_option {
         let license = license_template.replace(placeholders.0, license_author);
         license.replace(placeholders.1, license_year.to_string().as_str())
     } else {
