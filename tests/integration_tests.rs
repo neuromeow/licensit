@@ -250,6 +250,7 @@ fn test_licensit_show_with_env_variable_for_license_with_placeholders() {
         .arg("mit")
         .env("LICENSE_AUTHOR", license_author_env_variable)
         .assert()
+        .success()
         .stdout(render_mit_license_with_fillers(
             Some(license_author_env_variable),
             None,
@@ -266,6 +267,7 @@ fn test_licensit_show_with_user_option_for_license_with_placeholders() {
         .arg("mit")
         .arg(user_option_with_value)
         .assert()
+        .success()
         .stdout(render_mit_license_with_fillers(
             Some(license_author_passed_var),
             None,
@@ -284,6 +286,7 @@ fn test_licensit_show_with_user_option_and_env_variable_for_license_with_placeho
         .arg(user_option_with_value)
         .env("LICENSE_AUTHOR", license_author_env_variable)
         .assert()
+        .success()
         .stdout(render_mit_license_with_fillers(
             Some(license_author_passed_var),
             None,
@@ -302,6 +305,7 @@ fn test_licensit_show_with_year_option_and_env_variable_for_license_with_placeho
         .arg(year_option_with_value)
         .env("LICENSE_AUTHOR", license_author_env_variable)
         .assert()
+        .success()
         .stdout(render_mit_license_with_fillers(
             Some(license_author_env_variable),
             Some(year_passed_var),
@@ -321,6 +325,7 @@ fn test_licensit_show_with_user_and_year_options_for_license_with_placeholders()
         .arg(user_option_with_value)
         .arg(year_option_with_value)
         .assert()
+        .success()
         .stdout(render_mit_license_with_fillers(
             Some(license_author_passed_var),
             Some(year_passed_var),
@@ -342,6 +347,7 @@ fn test_licensit_show_with_user_and_year_options_and_env_variable_for_license_wi
         .arg(year_option_with_value)
         .env("LICENSE_AUTHOR", license_author_env_variable)
         .assert()
+        .success()
         .stdout(render_mit_license_with_fillers(
             Some(license_author_passed_var),
             Some(year_passed_var),
@@ -356,6 +362,7 @@ fn test_licensit_show_with_template_option_for_license_with_placeholders() {
         .arg("mit")
         .arg("--template")
         .assert()
+        .success()
         .stdout(MIT_LICENSE_TEMPLATE);
 }
 
