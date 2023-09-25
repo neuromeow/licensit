@@ -56,7 +56,10 @@ fn determine_license_author() -> String {
             let git_config_file_pathname = format!("{}/.gitconfig", home_env_variable);
             let mut git_config = Ini::new();
             if git_config.load(git_config_file_pathname).is_ok() {
-                return git_config.get("user", "name").unwrap();
+                let git_config_user_name_option = git_config.get("user", "name");
+                if let Some(name) = git_config_user_name_option {
+                    return name;
+                }
             }
         }
         whoami::username()
