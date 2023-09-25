@@ -26,8 +26,8 @@ pub enum Commands {
         #[arg(short, long, default_value_t = determine_license_author(), conflicts_with = "template")]
         user: String,
         /// The year the license is in effect
-        #[arg(short, long, default_value_t = chrono::Utc::now().year() as u16, conflicts_with = "template")]
-        year: u16,
+        #[arg(short, long, default_value_t = chrono::Utc::now().year() as u32, conflicts_with = "template")]
+        year: u32,
         /// License template only, no fillers for user or organization and year
         #[arg(short, long)]
         template: bool,
@@ -41,8 +41,8 @@ pub enum Commands {
         #[arg(short, long, default_value_t = determine_license_author())]
         user: String,
         /// The year the license is in effect
-        #[arg(short, long, default_value_t = chrono::Utc::now().year() as u16)]
-        year: u16,
+        #[arg(short, long, default_value_t = chrono::Utc::now().year() as u32)]
+        year: u32,
     },
 }
 

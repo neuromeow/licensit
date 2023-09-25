@@ -50,7 +50,7 @@ pub fn render_licence(
     license_name: &str,
     license_template: &str,
     license_author: &str,
-    license_year: &u16,
+    license_year: &u32,
 ) -> String {
     // Not all available licenses have placeholders.
     let licenses_placeholders = HashMap::from([
@@ -328,9 +328,9 @@ For more information, please refer to <https://unlicense.org>
     #[test]
     fn test_render_license() {
         let default_license_author = "default_license_author";
-        let default_license_year = 2023 as u16;
+        let default_license_year = 2023;
         let another_license_author = "another_license_author";
-        let another_license_year = 2024 as u16;
+        let another_license_year = 2024;
         let mit_license_template = fetch_license_template("mit");
         let lgpl_3_0_license_template = fetch_license_template("lgpl-3.0");
         let mit_license_default_fillers_expected_content = "MIT License
