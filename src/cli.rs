@@ -47,13 +47,13 @@ pub enum Commands {
 }
 
 fn determine_license_author() -> String {
-    let license_author_name_result = env::var("LICENSE_AUTHOR_NAME");
-    if let Ok(license_author_name) = license_author_name_result {
-        license_author_name
+    let license_author_env_variable_result = env::var("LICENSE_AUTHOR");
+    if let Ok(license_author_env_variable) = license_author_env_variable_result {
+        license_author_env_variable
     } else {
-        let home_result = env::var("HOME");
-        if let Ok(home) = home_result {
-            let git_config_file_pathname = format!("{}/.gitconfig", home);
+        let home_env_variable_result = env::var("HOME");
+        if let Ok(home_env_variable) = home_env_variable_result {
+            let git_config_file_pathname = format!("{}/.gitconfig", home_env_variable);
             let mut git_config = Ini::new();
             if git_config.load(git_config_file_pathname).is_ok() {
                 return git_config.get("user", "name").unwrap();
