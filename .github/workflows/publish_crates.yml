@@ -1,0 +1,22 @@
+name: Publishing to Crates.io
+
+on:
+  release:
+    types:
+      - published
+  workflow_dispatch:
+
+jobs:
+  publish:
+    name: Publish a Crate to crates.io
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+          profile: minimal
+      - run: cargo publish --token ${CRATES_TOKEN}
+        env:
+          CRATES_TOKEN: ${{ secrets.CRATES_LICENSIT_TOKEN }}
