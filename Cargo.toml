@@ -1,9 +1,16 @@
 [package]
 name = "licensit"
-version = "0.1.0"
+version = "0.3.0"
+authors = ["neuromeow <neuromeowhouse@gmail.com>"]
+rust-version = "1.70.0"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+description = "Command line tool to create LICENSE files"
+readme = "README.md"
+homepage = "https://github.com/neuromeow/licensit"
+repository = "https://github.com/neuromeow/licensit"
+license = "MIT"
+keywords = ["cli", "license-management"]
+categories = ["command-line-utilities"]
 
 [dependencies]
 assert_cmd = "2.0.12"
