@@ -1,7 +1,7 @@
 use include_dir::{include_dir, Dir};
 use std::collections::HashMap;
 
-static LICENSES_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/licenses");
+static LICENSES_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/data");
 
 pub const LICENSES_ABBREVIATIONS: [&str; 7] = [
     "agpl-3.0",
@@ -36,7 +36,7 @@ pub fn render_licences_list() -> String {
 }
 
 pub fn fetch_license_template(license_name: &str) -> &str {
-    let license_template_relative_path = format!("templates/{}", license_name);
+    let license_template_relative_path = format!("license_templates/{}", license_name);
     // It is necessary that there are license template files with names
     // that are present in the list with abbreviations of available licenses.
     let license_template_file = LICENSES_DIR
