@@ -1,7 +1,7 @@
 use include_dir::{include_dir, Dir};
 use std::collections::HashMap;
 
-static LICENSES_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/licenses");
+static LICENSES_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/data");
 
 pub const LICENSES_ABBREVIATIONS: [&str; 7] = [
     "agpl-3.0",
@@ -28,7 +28,7 @@ pub fn render_licences_list() -> String {
     for (license_abbreviation, license_name) in
         LICENSES_ABBREVIATIONS.into_iter().zip(LICENSES_NAMES)
     {
-        let licence_names = format!("{: <15}{}\n", license_abbreviation, license_name);
+        let licence_names = format!("{: <12}{}\n", license_abbreviation, license_name);
         licences_list.push_str(licence_names.as_str());
     }
     licences_list.pop();
@@ -36,7 +36,7 @@ pub fn render_licences_list() -> String {
 }
 
 pub fn fetch_license_template(license_name: &str) -> &str {
-    let license_template_relative_path = format!("templates/{}", license_name);
+    let license_template_relative_path = format!("license_templates/{}", license_name);
     // It is necessary that there are license template files with names
     // that are present in the list with abbreviations of available licenses.
     let license_template_file = LICENSES_DIR
@@ -74,13 +74,13 @@ mod tests {
 
     #[test]
     fn test_render_licences_list() {
-        let licences_list_expected_content = "agpl-3.0       GNU Affero General Public License v3.0
-apache-2.0     Apache License 2.0
-gpl-3.0        GNU General Public License v3.0
-lgpl-3.0       GNU Lesser General Public License v3.0
-mit            MIT License
-mpl-2.0        Mozilla Public License 2.0
-unlicense      The Unlicense";
+        let licences_list_expected_content = "agpl-3.0    GNU Affero General Public License v3.0
+apache-2.0  Apache License 2.0
+gpl-3.0     GNU General Public License v3.0
+lgpl-3.0    GNU Lesser General Public License v3.0
+mit         MIT License
+mpl-2.0     Mozilla Public License 2.0
+unlicense   The Unlicense";
         assert_eq!(render_licences_list(), licences_list_expected_content);
     }
 
