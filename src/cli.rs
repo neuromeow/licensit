@@ -5,7 +5,7 @@ use std::env;
 
 use crate::util::LICENSES_ABBREVIATIONS;
 
-/// Console application for working with open source licenses
+/// Command line tool to create LICENSE files
 #[derive(Parser)]
 #[command(version)]
 pub struct Cli {
