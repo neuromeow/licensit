@@ -222,7 +222,15 @@ fn test_licensit_show_with_user_and_template_options_for_license_without_placeho
         .arg("--user=license_author_passed_var")
         .arg("--template")
         .assert()
-        .failure();
+        .failure()
+        .stderr(
+            "error: the argument '--user <USER>' cannot be used with '--template'
+
+Usage: licensit show --user <USER> <LICENSE>
+
+For more information, try '--help'.
+",
+        );
 }
 
 // Only for Unlicense License as for license without placeholders.
@@ -235,7 +243,15 @@ fn test_licensit_show_with_year_and_template_options_for_license_without_placeho
         .arg("--year=2023")
         .arg("--template")
         .assert()
-        .failure();
+        .failure()
+        .stderr(
+            "error: the argument '--year <YEAR>' cannot be used with '--template'
+
+Usage: licensit show --year <YEAR> <LICENSE>
+
+For more information, try '--help'.
+",
+        );
 }
 
 // Only for Unlicense License as for license without placeholders.
@@ -249,7 +265,15 @@ fn test_licensit_show_with_all_options_for_license_without_placeholders() {
         .arg("--year=2023")
         .arg("--template")
         .assert()
-        .failure();
+        .failure()
+        .stderr(
+            "error: the argument '--user <USER>' cannot be used with '--template'
+
+Usage: licensit show --user <USER> --year <YEAR> <LICENSE>
+
+For more information, try '--help'.
+",
+        );
 }
 
 // Only for MIT License as for license with placeholders.
