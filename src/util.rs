@@ -28,7 +28,7 @@ pub fn render_licences_list() -> String {
     for (license_abbreviation, license_name) in
         LICENSES_ABBREVIATIONS.into_iter().zip(LICENSES_NAMES)
     {
-        let licence_names = format!("{: <15}{}\n", license_abbreviation, license_name);
+        let licence_names = format!("{: <12}{}\n", license_abbreviation, license_name);
         licences_list.push_str(licence_names.as_str());
     }
     licences_list.pop();
@@ -74,13 +74,13 @@ mod tests {
 
     #[test]
     fn test_render_licences_list() {
-        let licences_list_expected_content = "agpl-3.0       GNU Affero General Public License v3.0
-apache-2.0     Apache License 2.0
-gpl-3.0        GNU General Public License v3.0
-lgpl-3.0       GNU Lesser General Public License v3.0
-mit            MIT License
-mpl-2.0        Mozilla Public License 2.0
-unlicense      The Unlicense";
+        let licences_list_expected_content = "agpl-3.0    GNU Affero General Public License v3.0
+apache-2.0  Apache License 2.0
+gpl-3.0     GNU General Public License v3.0
+lgpl-3.0    GNU Lesser General Public License v3.0
+mit         MIT License
+mpl-2.0     Mozilla Public License 2.0
+unlicense   The Unlicense";
         assert_eq!(render_licences_list(), licences_list_expected_content);
     }
 
