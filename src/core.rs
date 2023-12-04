@@ -10,7 +10,8 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     let cli = Cli::parse();
     match &cli.command {
         Commands::List => {
-            let licences_list = render_licences_list();
+            let license_descriptions = load_license_descriptions();
+            let licences_list = render_licences_list_new(license_descriptions);
             println!("{}", licences_list);
         }
         Commands::Show {

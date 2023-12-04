@@ -26,7 +26,7 @@ const LICENSES_NAMES: [&str; 7] = [
 ];
 
 #[derive(Debug, Deserialize)]
-struct LicenseDescriptions {
+pub struct LicenseDescriptions {
     licenses: Vec<LicenseDescription>,
 }
 
@@ -59,6 +59,7 @@ pub fn render_licences_list_new(license_descriptions: LicenseDescriptions) -> St
     licences_list
 }
 
+#[allow(dead_code)]
 pub fn render_licences_list() -> String {
     let mut licences_list = String::new();
     for (license_abbreviation, license_name) in
