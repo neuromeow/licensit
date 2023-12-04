@@ -72,6 +72,23 @@ pub fn render_licences_list() -> String {
     licences_list
 }
 
+pub fn fetch_license_template_new(license_abbreviation: &str) -> &str {
+    let license_descriptions = load_license_descriptions();
+    let mut license_template_relative_path = String::new();
+    for license_description in license_descriptions.licenses {
+        if license_abbreviation == license_description.abbreviation {
+            license_template_relative_path
+                .push_str(license_description.template.unwrap().get("path").unwrap());
+        }
+    }
+    let license_template_file = LICENSES_DIR
+        .get_file(license_template_relative_path)
+        .unwrap();
+    let license_template = license_template_file.contents_utf8().unwrap();
+    license_template
+}
+
+#[allow(dead_code)]
 pub fn fetch_license_template(license_name: &str) -> &str {
     let license_template_relative_path = format!("license_templates/{}", license_name);
     // It is necessary that there are license template files with names

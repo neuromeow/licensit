@@ -20,7 +20,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
             year,
             template,
         } => {
-            let license_template = fetch_license_template(license);
+            let license_template = fetch_license_template_new(license);
             if *template {
                 println!("{}", license_template);
             } else {

@@ -6,16 +6,16 @@ licenses:
       author: "<name of author>"
       year: "<year>"
     template:
-      path: /license_templates/agpl-3.0
+      path: license_templates/agpl-3.0
   - abbreviation: "mit"
     name: "MIT License"
     placeholders:
       author: "[fullname]"
       year: "[year]"
     template:
-      path: /license_templates/mit
+      path: license_templates/mit
   - abbreviation: "unlicense"
     name: "The Unlicense"
     template:
-      path: /license_templates/unlicense
+      path: license_templates/unlicense
 ...
