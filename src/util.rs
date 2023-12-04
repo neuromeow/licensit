@@ -1,4 +1,6 @@
 use include_dir::{include_dir, Dir};
+use serde::Deserialize;
+use std::collections::BTreeMap;
 use std::collections::HashMap;
 
 static LICENSES_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/data");
@@ -22,6 +24,19 @@ const LICENSES_NAMES: [&str; 7] = [
     "Mozilla Public License 2.0",
     "The Unlicense",
 ];
+
+#[derive(Debug, Deserialize)]
+struct LicenseDescriptions {
+    licenses: Vec<LicenseDescription>,
+}
+
+#[derive(Debug, Deserialize)]
+struct LicenseDescription {
+    abbreviation: String,
+    name: String,
+    placeholders: BTreeMap<String, String>,
+    template: BTreeMap<String, String>,
+}
 
 pub fn render_licences_list() -> String {
     let mut licences_list = String::new();
