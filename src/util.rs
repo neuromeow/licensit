@@ -47,6 +47,18 @@ pub fn load_license_descriptions() -> LicenseDescriptions {
     license_descriptions
 }
 
+pub fn render_licences_list_new(license_descriptions: LicenseDescriptions) -> String {
+    let mut licences_list = String::new();
+    for license_description in license_descriptions.licenses {
+        let license_abbreviation = license_description.abbreviation;
+        let license_name = license_description.name;
+        let licence_names = format!("{: <12}{}\n", license_abbreviation, license_name);
+        licences_list.push_str(licence_names.as_str());
+    }
+    licences_list.pop();
+    licences_list
+}
+
 pub fn render_licences_list() -> String {
     let mut licences_list = String::new();
     for (license_abbreviation, license_name) in
