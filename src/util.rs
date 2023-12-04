@@ -38,6 +38,15 @@ struct LicenseDescription {
     template: BTreeMap<String, String>,
 }
 
+pub fn load_license_descriptions() -> LicenseDescriptions {
+    let license_descriptions_file = LICENSES_DIR
+        .get_file("licenses.yml")
+        .unwrap();
+    let license_descriptions = license_descriptions_file.contents_utf8().unwrap();
+    let license_descriptions = serde_yaml::from_str::<LicenseDescriptions>(&license_descriptions).unwrap();
+    license_descriptions
+}
+
 pub fn render_licences_list() -> String {
     let mut licences_list = String::new();
     for (license_abbreviation, license_name) in
