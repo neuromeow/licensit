@@ -34,8 +34,8 @@ pub struct LicenseDescriptions {
 struct LicenseDescription {
     abbreviation: String,
     name: String,
-    placeholders: BTreeMap<String, String>,
-    template: BTreeMap<String, String>,
+    placeholders: Option<BTreeMap<String, String>>,
+    template: Option<BTreeMap<String, String>>,
 }
 
 pub fn load_license_descriptions() -> LicenseDescriptions {

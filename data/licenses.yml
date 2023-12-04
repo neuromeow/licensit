@@ -14,4 +14,8 @@ licenses:
       year: "[year]"
     template:
       path: /license_templates/mit
+  - abbreviation: "unlicense"
+    name: "The Unlicense"
+    template:
+      path: /license_templates/unlicense
 ...
