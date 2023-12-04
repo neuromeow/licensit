@@ -83,6 +83,32 @@ pub fn fetch_license_template(license_name: &str) -> &str {
     license_template
 }
 
+pub fn render_licence_new(
+    license_abbreviation: &str,
+    license_template: &str,
+    license_author: &str,
+    license_year: &u32,
+) -> String {
+    let license_descriptions = load_license_descriptions();
+    let mut license = String::new();
+    for license_description in license_descriptions.licenses {
+        if license_abbreviation == license_description.abbreviation {
+            let license_placeholders_option = license_description.placeholders;
+            if let Some(placeholders) = license_placeholders_option {
+                let license_author_placeholder = placeholders.get("author").unwrap();
+                let license_year_placeholder = placeholders.get("year").unwrap();
+                license = license_template.replace(license_author_placeholder, license_author);
+                return license
+                    .replace(license_year_placeholder, license_year.to_string().as_str());
+            } else {
+                break;
+            }
+        }
+    }
+    license_template.to_string()
+}
+
+#[allow(dead_code)]
 pub fn render_licence(
     license_name: &str,
     license_template: &str,

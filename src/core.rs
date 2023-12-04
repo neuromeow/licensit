@@ -24,7 +24,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
             if *template {
                 println!("{}", license_template);
             } else {
-                let license = render_licence(license, license_template, user, year);
+                let license = render_licence_new(license, license_template, user, year);
                 println!("{}", license);
             }
         }
