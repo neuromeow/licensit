@@ -3,7 +3,7 @@ use clap::{Parser, Subcommand};
 use configparser::ini::Ini;
 use std::env;
 
-use crate::util::LICENSES_ABBREVIATIONS;
+use crate::util;
 
 /// Command line tool to create LICENSE files
 #[derive(Parser)]
@@ -20,7 +20,7 @@ pub enum Commands {
     /// Print the content of the selected license
     Show {
         /// Selected license
-        #[arg(value_parser = LICENSES_ABBREVIATIONS)]
+        #[arg(value_parser = parse_specified_license)]
         license: String,
         /// The user or organization who holds the license
         #[arg(short, long, default_value_t = determine_license_author(), conflicts_with = "template")]
@@ -35,7 +35,7 @@ pub enum Commands {
     /// Add the selected license to the current directory
     Add {
         /// Selected license
-        #[arg(value_parser = LICENSES_ABBREVIATIONS)]
+        #[arg(value_parser = parse_specified_license)]
         license: String,
         /// The user or organization who holds the license
         #[arg(short, long, default_value_t = determine_license_author())]
@@ -44,6 +44,22 @@ pub enum Commands {
         #[arg(short, long, default_value_t = chrono::Utc::now().year() as u32)]
         year: u32,
     },
+}
+
+fn parse_specified_license(specified_license: &str) -> Result<String, String> {
+    let license_descriptions = util::load_license_descriptions();
+    let mut license_abbreviations = Vec::new();
+    for license_description in license_descriptions.licenses {
+        license_abbreviations.push(license_description.abbreviation);
+    }
+    if license_abbreviations.contains(&specified_license.to_string()) {
+        Ok(specified_license.to_string())
+    } else {
+        Err(format!(
+            "specified license not in list {:?}",
+            license_abbreviations
+        ))
+    }
 }
 
 fn determine_license_author() -> String {

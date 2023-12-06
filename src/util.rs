@@ -27,12 +27,12 @@ const LICENSES_NAMES: [&str; 7] = [
 
 #[derive(Debug, Deserialize)]
 pub struct LicenseDescriptions {
-    licenses: Vec<LicenseDescription>,
+    pub licenses: Vec<LicenseDescription>,
 }
 
 #[derive(Debug, Deserialize)]
-struct LicenseDescription {
-    abbreviation: String,
+pub struct LicenseDescription {
+    pub abbreviation: String,
     name: String,
     placeholders: Option<BTreeMap<String, String>>,
     template: Option<BTreeMap<String, String>>,
