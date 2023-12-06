@@ -39,12 +39,9 @@ pub struct LicenseDescription {
 }
 
 pub fn load_license_descriptions() -> LicenseDescriptions {
-    let license_descriptions_file = LICENSES_DIR
-        .get_file("licenses.yml")
-        .unwrap();
+    let license_descriptions_file = LICENSES_DIR.get_file("licenses.yml").unwrap();
     let license_descriptions = license_descriptions_file.contents_utf8().unwrap();
-    let license_descriptions = serde_yaml::from_str::<LicenseDescriptions>(&license_descriptions).unwrap();
-    license_descriptions
+    serde_yaml::from_str::<LicenseDescriptions>(license_descriptions).unwrap()
 }
 
 pub fn render_licences_list_new(license_descriptions: LicenseDescriptions) -> String {
@@ -107,14 +104,13 @@ pub fn render_licence_new(
     license_year: &u32,
 ) -> String {
     let license_descriptions = load_license_descriptions();
-    let mut license = String::new();
     for license_description in license_descriptions.licenses {
         if license_abbreviation == license_description.abbreviation {
             let license_placeholders_option = license_description.placeholders;
             if let Some(placeholders) = license_placeholders_option {
                 let license_author_placeholder = placeholders.get("author").unwrap();
                 let license_year_placeholder = placeholders.get("year").unwrap();
-                license = license_template.replace(license_author_placeholder, license_author);
+                let license = license_template.replace(license_author_placeholder, license_author);
                 return license
                     .replace(license_year_placeholder, license_year.to_string().as_str());
             } else {
