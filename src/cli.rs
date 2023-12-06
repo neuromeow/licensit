@@ -3,7 +3,7 @@ use clap::{Parser, Subcommand};
 use configparser::ini::Ini;
 use std::env;
 
-use crate::util;
+use crate::license_renderers;
 
 /// Command line tool to create LICENSE files
 #[derive(Parser)]
@@ -47,7 +47,7 @@ pub enum Commands {
 }
 
 fn parse_specified_license(specified_license: &str) -> Result<String, String> {
-    let license_descriptions = util::load_license_descriptions();
+    let license_descriptions = license_renderers::load_license_descriptions();
     let mut license_abbreviations = Vec::new();
     for license_description in license_descriptions.licenses {
         license_abbreviations.push(license_description.abbreviation);
