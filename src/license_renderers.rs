@@ -3,6 +3,15 @@ use serde::Deserialize;
 use std::collections::BTreeMap;
 
 static LICENSES_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/data");
+const LICENSES_DESCRIPTIONS_FILE_BASENAME: &str = "licenses.yml";
+
+#[derive(Debug, Deserialize)]
+pub struct LicenseDescription {
+    pub abbreviation: String,
+    name: String,
+    placeholders: Option<BTreeMap<String, String>>,
+    template: Option<BTreeMap<String, String>>,
+}
 
 #[derive(Debug, Deserialize)]
 pub struct LicenseDescriptions {
@@ -11,7 +20,7 @@ pub struct LicenseDescriptions {
 
 impl LicenseDescriptions {
     pub fn from_licenses_descriptions_file() -> Self {
-        let licenses_descriptions_file = LICENSES_DIR.get_file("licenses.yml").unwrap();
+        let licenses_descriptions_file = LICENSES_DIR.get_file(LICENSES_DESCRIPTIONS_FILE_BASENAME).unwrap();
         let licenses_descriptions_file_content = licenses_descriptions_file.contents_utf8().unwrap();
         serde_yaml::from_str::<LicenseDescriptions>(licenses_descriptions_file_content).unwrap()
     }
@@ -67,12 +76,4 @@ impl LicenseDescriptions {
         }
         license_template.to_string()
     }
-}
-
-#[derive(Debug, Deserialize)]
-pub struct LicenseDescription {
-    pub abbreviation: String,
-    name: String,
-    placeholders: Option<BTreeMap<String, String>>,
-    template: Option<BTreeMap<String, String>>,
 }
