@@ -25,7 +25,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
                 println!("{}", license_template);
             } else {
                 let license =
-                    license_renderers::render_licence_new(license, license_template, user, year);
+                    license_descriptions.render_licence(license, license_template, user, year);
                 println!("{}", license);
             }
         }
