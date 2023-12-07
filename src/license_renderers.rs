@@ -14,9 +14,12 @@ pub struct LicenseDescription {
 }
 
 impl LicenseDescription {
+    fn get_license_template_path(&self) -> String {
+        self.template.clone().unwrap().get("path").unwrap().to_string()
+    }
+
     pub fn fetch_license_template(&self) -> &str {
-        let mut license_template_relative_path = String::new();
-        license_template_relative_path.push_str(self.template.clone().unwrap().get("path").unwrap());
+        let license_template_relative_path = &self.get_license_template_path();
         let license_template_file = LICENSES_DIR
             .get_file(license_template_relative_path)
             .unwrap();
