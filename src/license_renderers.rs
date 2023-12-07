@@ -9,6 +9,20 @@ pub struct LicenseDescriptions {
     pub licenses: Vec<LicenseDescription>,
 }
 
+impl LicenseDescriptions {
+    pub fn render_licences_list(&self) -> String {
+        let mut licences_list = String::new();
+        for license_description in &self.licenses {
+            let license_abbreviation = &license_description.abbreviation;
+            let license_name = &license_description.name;
+            let licence_names = format!("{: <12}{}\n", license_abbreviation, license_name);
+            licences_list.push_str(licence_names.as_str());
+        }
+        licences_list.pop();
+        licences_list
+    }
+}
+
 #[derive(Debug, Deserialize)]
 pub struct LicenseDescription {
     pub abbreviation: String,
@@ -17,22 +31,12 @@ pub struct LicenseDescription {
     template: Option<BTreeMap<String, String>>,
 }
 
+// pub fn load_license_descriptions() -> LicenseDescriptions {
 pub fn load_license_descriptions() -> LicenseDescriptions {
     let license_descriptions_file = LICENSES_DIR.get_file("licenses.yml").unwrap();
     let license_descriptions = license_descriptions_file.contents_utf8().unwrap();
+    // serde_yaml::from_str::<LicenseDescriptions>(license_descriptions).unwrap()
     serde_yaml::from_str::<LicenseDescriptions>(license_descriptions).unwrap()
-}
-
-pub fn render_licences_list_new(license_descriptions: LicenseDescriptions) -> String {
-    let mut licences_list = String::new();
-    for license_description in license_descriptions.licenses {
-        let license_abbreviation = license_description.abbreviation;
-        let license_name = license_description.name;
-        let licence_names = format!("{: <12}{}\n", license_abbreviation, license_name);
-        licences_list.push_str(licence_names.as_str());
-    }
-    licences_list.pop();
-    licences_list
 }
 
 pub fn fetch_license_template_new(license_abbreviation: &str) -> &str {

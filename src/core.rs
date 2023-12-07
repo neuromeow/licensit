@@ -11,7 +11,8 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     match &cli.command {
         Commands::List => {
             let license_descriptions = license_renderers::load_license_descriptions();
-            let licences_list = license_renderers::render_licences_list_new(license_descriptions);
+            // let licences_list = license_renderers::render_licences_list_new(license_descriptions);
+            let licences_list = license_descriptions.render_licences_list();
             println!("{}", licences_list);
         }
         Commands::Show {
