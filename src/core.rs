@@ -21,12 +21,12 @@ pub fn run() -> Result<(), Box<dyn Error>> {
             year,
             template,
         } => {
-            let license_template = license_descriptions.fetch_license_template(license);
+            // let license_template = license_descriptions.fetch_license_template(license);
             if *template {
+                let license_template = license_descriptions.fetch_license_template(license);
                 println!("{}", license_template);
             } else {
-                let license =
-                    license_descriptions.render_licence(license, license_template, user, year);
+                let license = license_descriptions.render_licence(license, user, year);
                 println!("{}", license);
             }
         }
