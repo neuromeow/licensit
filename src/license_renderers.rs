@@ -21,6 +21,21 @@ impl LicenseDescriptions {
         licences_list.pop();
         licences_list
     }
+
+    pub fn fetch_license_template(&self, license_abbreviation: &str) -> &str {
+        let mut license_template_relative_path = String::new();
+        for license_description in &self.licenses {
+            if license_abbreviation == license_description.abbreviation {
+                license_template_relative_path
+                    .push_str(license_description.template.clone().unwrap().get("path").unwrap());
+            }
+        }
+        let license_template_file = LICENSES_DIR
+            .get_file(license_template_relative_path)
+            .unwrap();
+        let license_template = license_template_file.contents_utf8().unwrap();
+        license_template
+    }
 }
 
 #[derive(Debug, Deserialize)]
@@ -37,22 +52,6 @@ pub fn load_license_descriptions() -> LicenseDescriptions {
     let license_descriptions = license_descriptions_file.contents_utf8().unwrap();
     // serde_yaml::from_str::<LicenseDescriptions>(license_descriptions).unwrap()
     serde_yaml::from_str::<LicenseDescriptions>(license_descriptions).unwrap()
-}
-
-pub fn fetch_license_template_new(license_abbreviation: &str) -> &str {
-    let license_descriptions = load_license_descriptions();
-    let mut license_template_relative_path = String::new();
-    for license_description in license_descriptions.licenses {
-        if license_abbreviation == license_description.abbreviation {
-            license_template_relative_path
-                .push_str(license_description.template.unwrap().get("path").unwrap());
-        }
-    }
-    let license_template_file = LICENSES_DIR
-        .get_file(license_template_relative_path)
-        .unwrap();
-    let license_template = license_template_file.contents_utf8().unwrap();
-    license_template
 }
 
 pub fn render_licence_new(

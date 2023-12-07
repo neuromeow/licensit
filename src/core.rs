@@ -7,11 +7,10 @@ use crate::cli::{Cli, Commands};
 use crate::{license_renderers, util};
 
 pub fn run() -> Result<(), Box<dyn Error>> {
+    let license_descriptions = license_renderers::load_license_descriptions();
     let cli = Cli::parse();
     match &cli.command {
         Commands::List => {
-            let license_descriptions = license_renderers::load_license_descriptions();
-            // let licences_list = license_renderers::render_licences_list_new(license_descriptions);
             let licences_list = license_descriptions.render_licences_list();
             println!("{}", licences_list);
         }
@@ -21,7 +20,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
             year,
             template,
         } => {
-            let license_template = license_renderers::fetch_license_template_new(license);
+            let license_template = license_descriptions.fetch_license_template(license);
             if *template {
                 println!("{}", license_template);
             } else {
