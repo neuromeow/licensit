@@ -13,6 +13,18 @@ pub struct LicenseDescription {
     template: Option<BTreeMap<String, String>>,
 }
 
+impl LicenseDescription {
+    pub fn fetch_license_template(&self) -> &str {
+        let mut license_template_relative_path = String::new();
+        license_template_relative_path.push_str(self.template.clone().unwrap().get("path").unwrap());
+        let license_template_file = LICENSES_DIR
+            .get_file(license_template_relative_path)
+            .unwrap();
+        let license_template = license_template_file.contents_utf8().unwrap();
+        license_template
+    }
+}
+
 #[derive(Debug, Deserialize)]
 pub struct LicenseDescriptions {
     pub licenses: Vec<LicenseDescription>,
@@ -38,17 +50,12 @@ impl LicenseDescriptions {
     }
 
     pub fn fetch_license_template(&self, license_abbreviation: &str) -> &str {
-        let mut license_template_relative_path = String::new();
+        let license_template = "";
         for license_description in &self.licenses {
             if license_abbreviation == license_description.abbreviation {
-                license_template_relative_path
-                    .push_str(license_description.template.clone().unwrap().get("path").unwrap());
+                return license_description.fetch_license_template();
             }
         }
-        let license_template_file = LICENSES_DIR
-            .get_file(license_template_relative_path)
-            .unwrap();
-        let license_template = license_template_file.contents_utf8().unwrap();
         license_template
     }
 
