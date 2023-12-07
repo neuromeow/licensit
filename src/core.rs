@@ -4,10 +4,11 @@ use std::fs::File;
 use std::io::Write;
 
 use crate::cli::{Cli, Commands};
-use crate::{license_renderers, util};
+use crate::util;
+use crate::license_renderers::LicenseDescriptions;
 
 pub fn run() -> Result<(), Box<dyn Error>> {
-    let license_descriptions = license_renderers::load_license_descriptions();
+    let license_descriptions = LicenseDescriptions::from_licenses_descriptions_file();
     let cli = Cli::parse();
     match &cli.command {
         Commands::List => {

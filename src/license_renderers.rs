@@ -10,6 +10,12 @@ pub struct LicenseDescriptions {
 }
 
 impl LicenseDescriptions {
+    pub fn from_licenses_descriptions_file() -> Self {
+        let licenses_descriptions_file = LICENSES_DIR.get_file("licenses.yml").unwrap();
+        let licenses_descriptions_file_content = licenses_descriptions_file.contents_utf8().unwrap();
+        serde_yaml::from_str::<LicenseDescriptions>(licenses_descriptions_file_content).unwrap()
+    }
+
     pub fn render_licences_list(&self) -> String {
         let mut licences_list = String::new();
         for license_description in &self.licenses {
@@ -69,12 +75,4 @@ pub struct LicenseDescription {
     name: String,
     placeholders: Option<BTreeMap<String, String>>,
     template: Option<BTreeMap<String, String>>,
-}
-
-// pub fn load_license_descriptions() -> LicenseDescriptions {
-pub fn load_license_descriptions() -> LicenseDescriptions {
-    let license_descriptions_file = LICENSES_DIR.get_file("licenses.yml").unwrap();
-    let license_descriptions = license_descriptions_file.contents_utf8().unwrap();
-    // serde_yaml::from_str::<LicenseDescriptions>(license_descriptions).unwrap()
-    serde_yaml::from_str::<LicenseDescriptions>(license_descriptions).unwrap()
 }
