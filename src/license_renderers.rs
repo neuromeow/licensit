@@ -5,14 +5,6 @@ static LICENSES_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/data");
 const LICENSES_DESCRIPTIONS_FILE_BASENAME: &str = "licenses.yml";
 
 #[derive(Debug, Deserialize)]
-pub struct LicenseDescription {
-    abbreviation: String,
-    name: String,
-    template_path: String,
-    placeholders: Option<LicensePlaceholders>,
-}
-
-#[derive(Debug, Deserialize)]
 pub struct LicensePlaceholders {
     author: String,
     year: String,
@@ -28,7 +20,23 @@ impl LicensePlaceholders {
     }
 }
 
+#[derive(Debug, Deserialize)]
+pub struct LicenseDescription {
+    abbreviation: String,
+    name: String,
+    template_path: String,
+    placeholders: Option<LicensePlaceholders>,
+}
+
 impl LicenseDescription {
+    fn get_abbreviation(&self) -> &str {
+        &self.abbreviation
+    }
+
+    fn get_name(&self) -> &str {
+        &self.name
+    }
+
     fn get_template_path(&self) -> &str {
         &self.template_path
     }
@@ -73,7 +81,7 @@ impl LicenseDescriptions {
 
     pub fn get_license_description(&self, license_abbreviation: &str) -> Result<&LicenseDescription, String> {
         for license_description in &self.licenses {
-            if license_abbreviation == license_description.abbreviation {
+            if license_abbreviation == license_description.get_abbreviation() {
                 return Ok(license_description);
             }
         }
@@ -86,8 +94,8 @@ impl LicenseDescriptions {
     pub fn render_licences_list(&self) -> String {
         let mut licences_list = String::new();
         for license_description in &self.licenses {
-            let license_abbreviation = &license_description.abbreviation;
-            let license_name = &license_description.name;
+            let license_abbreviation = license_description.get_abbreviation();
+            let license_name = license_description.get_name();
             let licence_names = format!("{: <12}{}\n", license_abbreviation, license_name);
             licences_list.push_str(licence_names.as_str());
         }
