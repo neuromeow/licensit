@@ -2,20 +2,17 @@
 licenses:
   - abbreviation: "agpl-3.0"
     name: "GNU Affero General Public License v3.0"
+    template_path: license_templates/agpl-3.0
     placeholders:
       author: "<name of author>"
       year: "<year>"
-    template:
-      path: license_templates/agpl-3.0
   - abbreviation: "mit"
     name: "MIT License"
+    template_path: license_templates/mit
     placeholders:
       author: "[fullname]"
       year: "[year]"
-    template:
-      path: license_templates/mit
   - abbreviation: "unlicense"
     name: "The Unlicense"
-    template:
-      path: license_templates/unlicense
+    template_path: license_templates/unlicense
 ...

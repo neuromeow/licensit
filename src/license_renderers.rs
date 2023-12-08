@@ -7,19 +7,19 @@ const LICENSES_DESCRIPTIONS_FILE_BASENAME: &str = "licenses.yml";
 
 #[derive(Debug, Deserialize)]
 pub struct LicenseDescription {
-    pub abbreviation: String,
+    abbreviation: String,
     name: String,
+    template_path: String,
     placeholders: Option<BTreeMap<String, String>>,
-    template: Option<BTreeMap<String, String>>,
 }
 
 impl LicenseDescription {
-    fn get_license_template_path(&self) -> String {
-        self.template.clone().unwrap().get("path").unwrap().to_string()
+    fn get_template_path(&self) -> &str {
+        &self.template_path
     }
 
     pub fn fetch_license_template(&self) -> &str {
-        let license_template_relative_path = &self.get_license_template_path();
+        let license_template_relative_path = self.get_template_path();
         let license_template_file = LICENSES_DIR
             .get_file(license_template_relative_path)
             .unwrap();
