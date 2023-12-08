@@ -79,8 +79,12 @@ impl LicenseDescriptions {
         serde_yaml::from_str::<LicenseDescriptions>(licenses_descriptions_file_content).unwrap()
     }
 
+    fn get_licenses(&self) -> &Vec<LicenseDescription> {
+        &self.licenses
+    }
+
     pub fn get_license_description(&self, license_abbreviation: &str) -> Result<&LicenseDescription, String> {
-        for license_description in &self.licenses {
+        for license_description in self.get_licenses() {
             if license_abbreviation == license_description.get_abbreviation() {
                 return Ok(license_description);
             }
@@ -93,7 +97,7 @@ impl LicenseDescriptions {
 
     pub fn render_licences_list(&self) -> String {
         let mut licences_list = String::new();
-        for license_description in &self.licenses {
+        for license_description in self.get_licenses() {
             let license_abbreviation = license_description.get_abbreviation();
             let license_name = license_description.get_name();
             let licence_names = format!("{: <12}{}\n", license_abbreviation, license_name);
