@@ -9,13 +9,23 @@ pub struct LicenseDescription {
     abbreviation: String,
     name: String,
     template_path: String,
-    placeholders: Option<Placeholders>,
+    placeholders: Option<LicensePlaceholders>,
 }
 
 #[derive(Debug, Deserialize)]
-pub struct Placeholders {
+pub struct LicensePlaceholders {
     author: String,
     year: String,
+}
+
+impl LicensePlaceholders {
+    pub fn get_author(&self) -> &str {
+        &self.author
+    }
+
+    pub fn get_year(&self) -> &str {
+        &self.year
+    }
 }
 
 impl LicenseDescription {
@@ -36,8 +46,8 @@ impl LicenseDescription {
         let license_template = self.fetch_license_template();
         let license_placeholders_option = &self.placeholders;
         if let Some(placeholders) = license_placeholders_option {
-            let license_author_placeholder = &placeholders.author;
-            let license_year_placeholder = &placeholders.year;
+            let license_author_placeholder = placeholders.get_author();
+            let license_year_placeholder = placeholders.get_year();
             let license = license_template.replace(license_author_placeholder, license_author);
             return license.replace(license_year_placeholder, license_year.to_string().as_str());
         }
