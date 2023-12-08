@@ -52,6 +52,18 @@ impl LicenseDescriptions {
         serde_yaml::from_str::<LicenseDescriptions>(licenses_descriptions_file_content).unwrap()
     }
 
+    pub fn get_license_description(&self, license_abbreviation: &str) -> Result<&LicenseDescription, String> {
+        for license_description in &self.licenses {
+            if license_abbreviation == license_description.abbreviation {
+                return Ok(license_description);
+            }
+        }
+        Err(format!(
+            "specified license not in list {:?}",
+            license_abbreviation
+        ))
+    }
+
     pub fn render_licences_list(&self) -> String {
         let mut licences_list = String::new();
         for license_description in &self.licenses {

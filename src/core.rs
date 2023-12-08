@@ -21,13 +21,17 @@ pub fn run() -> Result<(), Box<dyn Error>> {
             year,
             template,
         } => {
-            // let license_template = license_descriptions.fetch_license_template(license);
-            if *template {
-                let license_template = license_descriptions.fetch_license_template(license);
-                println!("{}", license_template);
+            let license_description_result = license_descriptions.get_license_description(license);
+            if let Ok(license_description) = license_description_result {
+                if *template {
+                    let license_template = license_description.fetch_license_template();
+                    println!("{}", license_template);
+                } else {
+                    let license = license_description.render_licence(user, year);
+                    println!("{}", license);
+                }
             } else {
-                let license = license_descriptions.render_licence(license, user, year);
-                println!("{}", license);
+                eprintln!("{}", license_description_result.unwrap_err());
             }
         }
         Commands::Add {
