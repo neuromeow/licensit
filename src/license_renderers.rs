@@ -1,6 +1,5 @@
 use include_dir::{include_dir, Dir};
 use serde::Deserialize;
-use std::collections::BTreeMap;
 
 static LICENSES_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/data");
 const LICENSES_DESCRIPTIONS_FILE_BASENAME: &str = "licenses.yml";
@@ -10,7 +9,13 @@ pub struct LicenseDescription {
     abbreviation: String,
     name: String,
     template_path: String,
-    placeholders: Option<BTreeMap<String, String>>,
+    placeholders: Option<Placeholders>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Placeholders {
+    author: String,
+    year: String,
 }
 
 impl LicenseDescription {
@@ -29,12 +34,12 @@ impl LicenseDescription {
 
     pub fn render_licence(&self, license_author: &str, license_year: &u32,) -> String {
         let license_template = self.fetch_license_template();
-        let license_placeholders_option = self.placeholders.clone();
-            if let Some(placeholders) = license_placeholders_option {
-                let license_author_placeholder = placeholders.get("author").unwrap();
-                let license_year_placeholder = placeholders.get("year").unwrap();
-                    let license = license_template.replace(license_author_placeholder, license_author);
-                    return license.replace(license_year_placeholder, license_year.to_string().as_str());
+        let license_placeholders_option = &self.placeholders;
+        if let Some(placeholders) = license_placeholders_option {
+            let license_author_placeholder = &placeholders.author;
+            let license_year_placeholder = &placeholders.year;
+            let license = license_template.replace(license_author_placeholder, license_author);
+            return license.replace(license_year_placeholder, license_year.to_string().as_str());
         }
         license_template.to_string()
     }
