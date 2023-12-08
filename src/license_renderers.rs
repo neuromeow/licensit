@@ -33,6 +33,10 @@ impl LicenseDescription {
         &self.template_path
     }
 
+    fn get_placeholders(&self) -> &Option<LicensePlaceholders> {
+        &self.placeholders
+    }
+
     pub fn fetch_license_template(&self) -> &str {
         let license_template_relative_path = self.get_template_path();
         let license_template_file = LICENSES_DIR
@@ -44,7 +48,7 @@ impl LicenseDescription {
 
     pub fn render_licence(&self, license_author: &str, license_year: &u32,) -> String {
         let license_template = self.fetch_license_template();
-        let license_placeholders_option = &self.placeholders;
+        let license_placeholders_option = self.get_placeholders();
         if let Some(placeholders) = license_placeholders_option {
             let license_author_placeholder = placeholders.get_author();
             let license_year_placeholder = placeholders.get_year();
