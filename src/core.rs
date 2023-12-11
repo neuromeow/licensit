@@ -12,30 +12,30 @@ static LICENSES_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/data");
 const LICENSES_DESCRIPTIONS_FILE_BASENAME: &str = "licenses.yml";
 
 #[derive(Debug, Deserialize)]
-pub struct LicensePlaceholders {
+struct Placeholders {
     author: String,
     year: String,
 }
 
-impl LicensePlaceholders {
-    pub fn get_author(&self) -> &str {
+impl Placeholders {
+    fn get_author(&self) -> &str {
         &self.author
     }
 
-    pub fn get_year(&self) -> &str {
+    fn get_year(&self) -> &str {
         &self.year
     }
 }
 
 #[derive(Debug, Deserialize)]
-pub struct LicenseDescription {
+struct License {
     abbreviation: String,
     name: String,
     template_path: String,
-    placeholders: Option<LicensePlaceholders>,
+    placeholders: Option<Placeholders>,
 }
 
-impl LicenseDescription {
+impl License {
     fn get_abbreviation(&self) -> &str {
         &self.abbreviation
     }
@@ -48,49 +48,49 @@ impl LicenseDescription {
         &self.template_path
     }
 
-    fn get_placeholders(&self) -> &Option<LicensePlaceholders> {
+    fn get_placeholders(&self) -> &Option<Placeholders> {
         &self.placeholders
     }
 
-    pub fn fetch_license_template(&self) -> &str {
-        let license_template_relative_path = self.get_template_path();
-        let license_template_file = LICENSES_DIR
-            .get_file(license_template_relative_path)
-            .unwrap();
-        let license_template = license_template_file.contents_utf8().unwrap();
-        license_template
+    fn fetch_template(&self) -> &str {
+        let template_relative_path = self.get_template_path();
+        let template_file = LICENSES_DIR.get_file(template_relative_path).unwrap();
+        template_file.contents_utf8().unwrap()
     }
 
-    pub fn render_licence(&self, license_author: &str, license_year: &u32,) -> String {
-        let license_template = self.fetch_license_template();
-        let license_placeholders_option = self.get_placeholders();
-        if let Some(placeholders) = license_placeholders_option {
-            let license_author_placeholder = placeholders.get_author();
-            let license_year_placeholder = placeholders.get_year();
-            let license = license_template.replace(license_author_placeholder, license_author);
-            return license.replace(license_year_placeholder, license_year.to_string().as_str());
+    fn render_licence(&self, author: &str, year: &u32) -> String {
+        let template = self.fetch_template();
+        let placeholders_option = self.get_placeholders();
+        if let Some(placeholders) = placeholders_option {
+            let author_placeholder = placeholders.get_author();
+            let year_placeholder = placeholders.get_year();
+            let rendered_license = template.replace(author_placeholder, author);
+            return rendered_license.replace(year_placeholder, &year.to_string());
         }
-        license_template.to_string()
+        template.to_string()
     }
 }
 
 #[derive(Debug, Deserialize)]
-pub struct LicenseDescriptions {
-    pub licenses: Vec<LicenseDescription>,
+struct Licenses {
+    licenses: Vec<License>,
 }
 
-impl LicenseDescriptions {
-    pub fn from_licenses_descriptions_file() -> Self {
-        let licenses_descriptions_file = LICENSES_DIR.get_file(LICENSES_DESCRIPTIONS_FILE_BASENAME).unwrap();
-        let licenses_descriptions_file_content = licenses_descriptions_file.contents_utf8().unwrap();
-        serde_yaml::from_str::<LicenseDescriptions>(licenses_descriptions_file_content).unwrap()
+impl Licenses {
+    fn from_licenses_file() -> Self {
+        let licenses_file = LICENSES_DIR
+            .get_file(LICENSES_DESCRIPTIONS_FILE_BASENAME)
+            .unwrap();
+        let licenses_file_content = licenses_file.contents_utf8().unwrap();
+        serde_yaml::from_str::<Licenses>(licenses_file_content).unwrap()
     }
 
-    fn get_licenses(&self) -> &Vec<LicenseDescription> {
+    fn get_licenses(&self) -> &Vec<License> {
         &self.licenses
     }
 
-    pub fn get_license_description(&self, license_abbreviation: &str) -> Result<&LicenseDescription, String> {
+    // TODO: Method needs to be refactored
+    fn get_license_description(&self, license_abbreviation: &str) -> Result<&License, String> {
         for license_description in self.get_licenses() {
             if license_abbreviation == license_description.get_abbreviation() {
                 return Ok(license_description);
@@ -102,7 +102,8 @@ impl LicenseDescriptions {
         ))
     }
 
-    pub fn render_licenses_list(&self) -> Vec<String> {
+    // TODO: Method needs to be refactored
+    fn render_licenses_list(&self) -> Vec<String> {
         let mut licences_list = Vec::new();
         let license_descriptions = self.get_licenses();
         for license_description in license_descriptions {
@@ -116,11 +117,11 @@ impl LicenseDescriptions {
 }
 
 pub fn run() -> Result<(), Box<dyn Error>> {
-    let license_descriptions = LicenseDescriptions::from_licenses_descriptions_file();
+    let licenses = Licenses::from_licenses_file();
     let cli = Cli::parse();
     match &cli.command {
         Commands::List => {
-            let licenses_list = license_descriptions.render_licenses_list();
+            let licenses_list = licenses.render_licenses_list();
             for license in licenses_list {
                 println!("{}", license);
             }
@@ -131,10 +132,10 @@ pub fn run() -> Result<(), Box<dyn Error>> {
             year,
             template,
         } => {
-            let license_description_result = license_descriptions.get_license_description(license);
+            let license_description_result = licenses.get_license_description(license);
             if let Ok(license_description) = license_description_result {
                 if *template {
-                    let license_template = license_description.fetch_license_template();
+                    let license_template = license_description.fetch_template();
                     println!("{}", license_template);
                 } else {
                     let license = license_description.render_licence(user, year);
