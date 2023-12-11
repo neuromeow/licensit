@@ -81,19 +81,19 @@ struct Licenses {
 }
 
 impl Licenses {
-    fn from_licenses_file() -> Self {
-        let licenses_file = LICENSES_DIR
+    fn from_description_file() -> Self {
+        let description_file = LICENSES_DIR
             .get_file(LICENSES_DESCRIPTIONS_FILE_BASENAME)
             .unwrap();
-        let licenses_file_content = licenses_file.contents_utf8().unwrap();
-        serde_yaml::from_str::<Licenses>(licenses_file_content).unwrap()
+        let description_file_content = description_file.contents_utf8().unwrap();
+        serde_yaml::from_str::<Licenses>(description_file_content).unwrap()
     }
 
     fn get_licenses(&self) -> &Vec<License> {
         &self.licenses
     }
 
-    fn get_license(&self, abbreviation: &str) -> Option<&License> {
+    fn find_license(&self, abbreviation: &str) -> Option<&License> {
         self.get_licenses()
             .iter()
             .find(|&license| license.get_abbreviation() == abbreviation)
@@ -108,7 +108,7 @@ impl Licenses {
 }
 
 pub fn run() -> Result<(), Box<dyn Error>> {
-    let licenses = Licenses::from_licenses_file();
+    let licenses = Licenses::from_description_file();
     let cli = Cli::parse();
     match &cli.command {
         Commands::List => {
@@ -123,17 +123,17 @@ pub fn run() -> Result<(), Box<dyn Error>> {
             year,
             template,
         } => {
-            let license_description_option = licenses.get_license(license);
+            let license_description_option = licenses.find_license(license);
             if let Some(license_description) = license_description_option {
                 if *template {
                     let license_template = license_description.fetch_template();
                     println!("{}", license_template);
                 } else {
-                    let license = license_description.render_licence(user, year);
-                    println!("{}", license);
+                    let rendered_license = license_description.render_licence(user, year);
+                    println!("{}", rendered_license);
                 }
             } else {
-                eprintln!("specified license "{}" not in list", license);
+                eprintln!("error: invalid value {} for '<LICENSE>'", license);
             }
         }
         Commands::Add {
