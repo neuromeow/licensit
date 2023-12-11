@@ -1,6 +1,5 @@
 mod cli;
 mod core;
-mod license_renderers;
 mod util;
 
 fn main() {
