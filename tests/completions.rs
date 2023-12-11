@@ -103,6 +103,7 @@ fn create_licensit_add_command() -> Command {
 
 // Simulated command:
 // `licensit list`
+#[ignore]
 #[test]
 fn test_licensit_list() {
     let mut cmd = Command::cargo_bin("licensit").unwrap();

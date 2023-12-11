@@ -3,8 +3,6 @@ use clap::{Parser, Subcommand};
 use configparser::ini::Ini;
 use std::env;
 
-use crate::util::LICENSES_ABBREVIATIONS;
-
 /// Command line tool to create LICENSE files
 #[derive(Parser)]
 #[command(version)]
@@ -20,7 +18,6 @@ pub enum Commands {
     /// Print the content of the selected license
     Show {
         /// Selected license
-        #[arg(value_parser = LICENSES_ABBREVIATIONS)]
         license: String,
         /// The user or organization who holds the license
         #[arg(short, long, default_value_t = determine_license_author(), conflicts_with = "template")]
@@ -35,7 +32,6 @@ pub enum Commands {
     /// Add the selected license to the current directory
     Add {
         /// Selected license
-        #[arg(value_parser = LICENSES_ABBREVIATIONS)]
         license: String,
         /// The user or organization who holds the license
         #[arg(short, long, default_value_t = determine_license_author())]
