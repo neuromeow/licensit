@@ -6,7 +6,6 @@ use std::fs::File;
 use std::io::Write;
 
 use crate::cli::{Cli, Commands};
-use crate::util;
 
 static LICENSES_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/data");
 const LICENSES_DESCRIPTIONS_FILE_BASENAME: &str = "licenses.yml";
@@ -141,10 +140,14 @@ pub fn run() -> Result<(), Box<dyn Error>> {
             user,
             year,
         } => {
-            let license_template = util::fetch_license_template(license);
-            let license = util::render_licence(license, license_template, user, year);
-            let mut license_file = File::create("LICENSE")?;
-            license_file.write_all(license.as_bytes())?;
+            let license_description_option = licenses.find_license(license);
+            if let Some(license_description) = license_description_option {
+                let rendered_license = license_description.render_licence(user, year);
+                let mut rendered_license_file = File::create("LICENSE")?;
+                rendered_license_file.write_all(rendered_license.as_bytes())?;
+            } else {
+                eprintln!("error: invalid value {} for '<LICENSE>'", license);
+            }
         }
     }
     Ok(())
