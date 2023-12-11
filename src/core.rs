@@ -52,6 +52,10 @@ impl License {
         &self.placeholders
     }
 
+    fn format_license_names(&self) -> String {
+        format!("{: <12}{}", self.get_abbreviation(), self.get_name())
+    }
+
     fn fetch_template(&self) -> &str {
         let template_relative_path = self.get_template_path();
         let template_file = LICENSES_DIR.get_file(template_relative_path).unwrap();
@@ -102,17 +106,11 @@ impl Licenses {
         ))
     }
 
-    // TODO: Method needs to be refactored
-    fn render_licenses_list(&self) -> Vec<String> {
-        let mut licences_list = Vec::new();
-        let license_descriptions = self.get_licenses();
-        for license_description in license_descriptions {
-            let license_abbreviation = license_description.get_abbreviation();
-            let license_name = license_description.get_name();
-            let licence_names = format!("{: <12}{}", license_abbreviation, license_name);
-            licences_list.push(licence_names);
-        }
-        licences_list
+    fn fetch_licenses_names_list(&self) -> Vec<String> {
+        self.get_licenses()
+            .iter()
+            .map(|license| license.format_license_names())
+            .collect()
     }
 }
 
@@ -121,9 +119,9 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     let cli = Cli::parse();
     match &cli.command {
         Commands::List => {
-            let licenses_list = licenses.render_licenses_list();
-            for license in licenses_list {
-                println!("{}", license);
+            let licenses_names_list = licenses.fetch_licenses_names_list();
+            for license_names in licenses_names_list {
+                println!("{}", license_names);
             }
         }
         Commands::Show {
