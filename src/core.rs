@@ -93,17 +93,10 @@ impl Licenses {
         &self.licenses
     }
 
-    // TODO: Method needs to be refactored
-    fn get_license_description(&self, license_abbreviation: &str) -> Result<&License, String> {
-        for license_description in self.get_licenses() {
-            if license_abbreviation == license_description.get_abbreviation() {
-                return Ok(license_description);
-            }
-        }
-        Err(format!(
-            "specified license not in list {:?}",
-            license_abbreviation
-        ))
+    fn get_license(&self, abbreviation: &str) -> Option<&License> {
+        self.get_licenses()
+            .iter()
+            .find(|&license| license.get_abbreviation() == abbreviation)
     }
 
     fn fetch_licenses_names_list(&self) -> Vec<String> {
@@ -130,8 +123,8 @@ pub fn run() -> Result<(), Box<dyn Error>> {
             year,
             template,
         } => {
-            let license_description_result = licenses.get_license_description(license);
-            if let Ok(license_description) = license_description_result {
+            let license_description_option = licenses.get_license(license);
+            if let Some(license_description) = license_description_option {
                 if *template {
                     let license_template = license_description.fetch_template();
                     println!("{}", license_template);
@@ -140,7 +133,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
                     println!("{}", license);
                 }
             } else {
-                eprintln!("{}", license_description_result.unwrap_err());
+                eprintln!("specified license "{}" not in list", license);
             }
         }
         Commands::Add {
