@@ -95,15 +95,15 @@ impl LicenseDescriptions {
         ))
     }
 
-    pub fn render_licences_list(&self) -> String {
-        let mut licences_list = String::new();
-        for license_description in self.get_licenses() {
+    pub fn render_licenses_list(&self) -> Vec<String> {
+        let mut licences_list = Vec::new();
+        let license_descriptions = self.get_licenses();
+        for license_description in license_descriptions {
             let license_abbreviation = license_description.get_abbreviation();
             let license_name = license_description.get_name();
-            let licence_names = format!("{: <12}{}\n", license_abbreviation, license_name);
-            licences_list.push_str(licence_names.as_str());
+            let licence_names = format!("{: <12}{}", license_abbreviation, license_name);
+            licences_list.push(licence_names);
         }
-        licences_list.pop();
         licences_list
     }
 }
