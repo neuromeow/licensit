@@ -3,6 +3,8 @@ use clap::{Parser, Subcommand};
 use configparser::ini::Ini;
 use std::env;
 
+pub const LICENSE_ARG: &str = "LICENSE";
+
 /// Command line tool to create LICENSE files
 #[derive(Parser)]
 #[command(version)]
@@ -18,7 +20,7 @@ pub enum Commands {
     /// Print the content of the selected license
     Show {
         /// Selected license
-        #[arg(value_name = "LICENSE")]
+        #[arg(value_name = LICENSE_ARG)]
         name: String,
         /// The user or organization who holds the license
         #[arg(short = 'u', long = "user", value_name = "USER", default_value_t = determine_license_author(), conflicts_with = "is_template")]
@@ -33,7 +35,7 @@ pub enum Commands {
     /// Add the selected license to the current directory
     Add {
         /// Selected license
-        #[arg(value_name = "LICENSE")]
+        #[arg(value_name = LICENSE_ARG)]
         name: String,
         /// The user or organization who holds the license
         #[arg(short = 'u', long = "user", value_name = "USER", default_value_t = determine_license_author())]

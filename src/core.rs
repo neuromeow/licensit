@@ -6,7 +6,7 @@ use std::error::Error;
 use std::fs::File;
 use std::io::Write;
 
-use crate::cli::{Cli, Commands};
+use crate::cli::{Cli, Commands, LICENSE_ARG};
 
 static LICENSES_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/data");
 const LICENSES_DESCRIPTIONS_FILE_BASENAME: &str = "licenses.yml";
@@ -123,7 +123,7 @@ fn render_invalid_value_error_message(invalid_arg: &str, possible_values: &[Stri
     format!(
         "{}: invalid value for '{}'\n\nPossible values: {}\n\nFor more information, try '{}'.",
         "error".red(),
-        invalid_arg.bold(),
+        format!("<{}>", invalid_arg).bold(),
         formatted_possible_values,
         "--help".bold()
     )
@@ -131,7 +131,7 @@ fn render_invalid_value_error_message(invalid_arg: &str, possible_values: &[Stri
 
 fn render_nonexistent_license_error(licenses: &Licenses) -> String {
     let licenses_names = licenses.fetch_licenses_names();
-    render_invalid_value_error_message("<LICENSE>", &licenses_names)
+    render_invalid_value_error_message(LICENSE_ARG, &licenses_names)
 }
 
 pub fn run() -> Result<(), Box<dyn Error>> {
