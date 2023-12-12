@@ -52,10 +52,6 @@ impl License {
         &self.placeholders
     }
 
-    fn format_license_names(&self) -> String {
-        format!("{: <12}{}", self.get_name(), self.get_full_name())
-    }
-
     fn fetch_template(&self) -> &str {
         let template_relative_path = self.get_template_path();
         let template_file = LICENSES_DIR.get_file(template_relative_path).unwrap();
@@ -106,10 +102,18 @@ impl Licenses {
             .collect()
     }
 
-    fn fetch_formatted_licenses_names(&self) -> Vec<String> {
+    fn fetch_licenses_full_names(&self) -> Vec<String> {
         self.get_licenses()
             .iter()
-            .map(|license| license.format_license_names())
+            .map(|license| license.get_full_name().to_string())
+            .collect()
+    }
+
+    fn fetch_formatted_licenses_names_and_full_names(&self) -> Vec<String> {
+        self.fetch_licenses_names()
+            .iter()
+            .zip(&self.fetch_licenses_full_names())
+            .map(|(name, full_name)| format!("{: <12}{}", name, full_name))
             .collect()
     }
 }
@@ -139,9 +143,10 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     let cli = Cli::parse();
     match &cli.command {
         Commands::List => {
-            let licenses_names = licenses.fetch_formatted_licenses_names();
-            for license_names in licenses_names {
-                println!("{}", license_names);
+            let formatted_licenses_names_and_full_names =
+                licenses.fetch_formatted_licenses_names_and_full_names();
+            for formatted_license_name_and_full_name in formatted_licenses_names_and_full_names {
+                println!("{}", formatted_license_name_and_full_name);
             }
         }
         Commands::Show {
