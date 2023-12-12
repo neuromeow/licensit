@@ -1,4 +1,5 @@
 use clap::Parser;
+use colored::*;
 use include_dir::{include_dir, Dir};
 use serde::Deserialize;
 use std::error::Error;
@@ -101,6 +102,13 @@ impl Licenses {
     fn fetch_licenses_names(&self) -> Vec<String> {
         self.get_licenses()
             .iter()
+            .map(|license| license.get_name().to_string())
+            .collect()
+    }
+
+    fn fetch_formatted_licenses_names(&self) -> Vec<String> {
+        self.get_licenses()
+            .iter()
             .map(|license| license.format_license_names())
             .collect()
     }
@@ -111,7 +119,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     let cli = Cli::parse();
     match &cli.command {
         Commands::List => {
-            let licenses_names = licenses.fetch_licenses_names();
+            let licenses_names = licenses.fetch_formatted_licenses_names();
             for license_names in licenses_names {
                 println!("{}", license_names);
             }
@@ -132,7 +140,12 @@ pub fn run() -> Result<(), Box<dyn Error>> {
                     println!("{}", rendered_license);
                 }
             } else {
-                eprintln!("error: invalid value {} for '<LICENSE>'", name);
+                eprintln!("error: invalid value for '<LICENSE>'. Possible values: {}\n\nFor more information, try '--help'.",
+                          licenses.fetch_licenses_names()
+                              .iter()
+                              .map(|name| name.green().to_string())
+                              .collect::<Vec<String>>()
+                              .join(", "));
             }
         }
         Commands::Add {
@@ -146,7 +159,12 @@ pub fn run() -> Result<(), Box<dyn Error>> {
                 let mut rendered_license_file = File::create("LICENSE")?;
                 rendered_license_file.write_all(rendered_license.as_bytes())?;
             } else {
-                eprintln!("error: invalid value {} for '<LICENSE>'", name);
+                eprintln!("error: invalid value for '<LICENSE>'. Possible values: {}\n\nFor more information, try '--help'.",
+                          licenses.fetch_licenses_names()
+                              .iter()
+                              .map(|name| name.green().to_string())
+                              .collect::<Vec<String>>()
+                              .join(", "));
             }
         }
     }
