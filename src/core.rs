@@ -28,20 +28,19 @@ impl Placeholders {
 
 #[derive(Debug, Deserialize)]
 struct License {
-    abbreviation: String,
     name: String,
-    shortname: String,
+    full_name: String,
     template_path: String,
     placeholders: Option<Placeholders>,
 }
 
 impl License {
-    fn get_abbreviation(&self) -> &str {
-        &self.abbreviation
-    }
-
     fn get_name(&self) -> &str {
         &self.name
+    }
+
+    fn get_full_name(&self) -> &str {
+        &self.full_name
     }
 
     fn get_template_path(&self) -> &str {
@@ -53,7 +52,7 @@ impl License {
     }
 
     fn format_license_names(&self) -> String {
-        format!("{: <12}{}", self.get_abbreviation(), self.get_name())
+        format!("{: <12}{}", self.get_name(), self.get_full_name())
     }
 
     fn fetch_template(&self) -> &str {
@@ -93,13 +92,13 @@ impl Licenses {
         &self.licenses
     }
 
-    fn find_license(&self, abbreviation: &str) -> Option<&License> {
+    fn find_license(&self, name: &str) -> Option<&License> {
         self.get_licenses()
             .iter()
-            .find(|&license| license.get_abbreviation() == abbreviation)
+            .find(|&license| license.get_name() == name)
     }
 
-    fn fetch_licenses_names_list(&self) -> Vec<String> {
+    fn fetch_licenses_names(&self) -> Vec<String> {
         self.get_licenses()
             .iter()
             .map(|license| license.format_license_names())
@@ -112,24 +111,24 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     let cli = Cli::parse();
     match &cli.command {
         Commands::List => {
-            let licenses_names_list = licenses.fetch_licenses_names_list();
-            for license_names in licenses_names_list {
+            let licenses_names = licenses.fetch_licenses_names();
+            for license_names in licenses_names {
                 println!("{}", license_names);
             }
         }
         Commands::Show {
-            shortname: name,
+            name,
             author,
             year,
             is_template,
         } => {
-            let license_description_option = licenses.find_license(name);
-            if let Some(license_description) = license_description_option {
+            let license_option = licenses.find_license(name);
+            if let Some(license) = license_option {
                 if *is_template {
-                    let template = license_description.fetch_template();
+                    let template = license.fetch_template();
                     println!("{}", template);
                 } else {
-                    let rendered_license = license_description.render_licence(author, year);
+                    let rendered_license = license.render_licence(author, year);
                     println!("{}", rendered_license);
                 }
             } else {
@@ -141,9 +140,9 @@ pub fn run() -> Result<(), Box<dyn Error>> {
             author,
             year,
         } => {
-            let license_description_option = licenses.find_license(name);
-            if let Some(license_description) = license_description_option {
-                let rendered_license = license_description.render_licence(author, year);
+            let license_option = licenses.find_license(name);
+            if let Some(license) = license_option {
+                let rendered_license = license.render_licence(author, year);
                 let mut rendered_license_file = File::create("LICENSE")?;
                 rendered_license_file.write_all(rendered_license.as_bytes())?;
             } else {

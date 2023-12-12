@@ -19,7 +19,7 @@ pub enum Commands {
     Show {
         /// Selected license
         #[arg(value_name = "LICENSE")]
-        shortname: String,
+        name: String,
         /// The user or organization who holds the license
         #[arg(short = 'u', long = "user", value_name = "USER", default_value_t = determine_license_author(), conflicts_with = "is_template")]
         author: String,
