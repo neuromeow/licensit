@@ -30,6 +30,7 @@ impl Placeholders {
 struct License {
     abbreviation: String,
     name: String,
+    shortname: String,
     template_path: String,
     placeholders: Option<Placeholders>,
 }
@@ -117,36 +118,36 @@ pub fn run() -> Result<(), Box<dyn Error>> {
             }
         }
         Commands::Show {
-            license,
-            user,
+            shortname: name,
+            author,
             year,
-            template,
+            is_template,
         } => {
-            let license_description_option = licenses.find_license(license);
+            let license_description_option = licenses.find_license(name);
             if let Some(license_description) = license_description_option {
-                if *template {
-                    let license_template = license_description.fetch_template();
-                    println!("{}", license_template);
+                if *is_template {
+                    let template = license_description.fetch_template();
+                    println!("{}", template);
                 } else {
-                    let rendered_license = license_description.render_licence(user, year);
+                    let rendered_license = license_description.render_licence(author, year);
                     println!("{}", rendered_license);
                 }
             } else {
-                eprintln!("error: invalid value {} for '<LICENSE>'", license);
+                eprintln!("error: invalid value {} for '<LICENSE>'", name);
             }
         }
         Commands::Add {
-            license,
-            user,
+            name,
+            author,
             year,
         } => {
-            let license_description_option = licenses.find_license(license);
+            let license_description_option = licenses.find_license(name);
             if let Some(license_description) = license_description_option {
-                let rendered_license = license_description.render_licence(user, year);
+                let rendered_license = license_description.render_licence(author, year);
                 let mut rendered_license_file = File::create("LICENSE")?;
                 rendered_license_file.write_all(rendered_license.as_bytes())?;
             } else {
-                eprintln!("error: invalid value {} for '<LICENSE>'", license);
+                eprintln!("error: invalid value {} for '<LICENSE>'", name);
             }
         }
     }
