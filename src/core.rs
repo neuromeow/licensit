@@ -8,7 +8,7 @@ use std::io::Write;
 
 use crate::cli::{Cli, Commands, LICENSE_ARG};
 
-static LICENSES_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/data");
+static LICENSES_DATA_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/data/licenses");
 const LICENSES_DESCRIPTIONS_FILE_BASENAME: &str = "licenses.yml";
 
 #[derive(Debug, Deserialize)]
@@ -54,7 +54,7 @@ impl License {
 
     fn fetch_template(&self) -> &str {
         let template_relative_path = self.get_template_path();
-        let template_file = LICENSES_DIR.get_file(template_relative_path).unwrap();
+        let template_file = LICENSES_DATA_DIR.get_file(template_relative_path).unwrap();
         template_file.contents_utf8().unwrap()
     }
 
@@ -78,7 +78,7 @@ struct Licenses {
 
 impl Licenses {
     fn from_description_file() -> Self {
-        let description_file = LICENSES_DIR
+        let description_file = LICENSES_DATA_DIR
             .get_file(LICENSES_DESCRIPTIONS_FILE_BASENAME)
             .unwrap();
         let description_file_content = description_file.contents_utf8().unwrap();

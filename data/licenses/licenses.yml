@@ -1,0 +1,36 @@
+---
+licenses:
+  - name: "agpl-3.0"
+    full_name: "GNU Affero General Public License v3.0"
+    template_path: templates/agpl-3.0
+    placeholders:
+      author: "<name of author>"
+      year: "<year>"
+  - name: "apache-2.0"
+    full_name: "Apache License 2.0"
+    template_path: templates/apache-2.0
+    placeholders:
+      author: "[name of copyright owner]"
+      year: "[yyyy]"
+  - name: "gpl-3.0"
+    full_name: "GNU General Public License v3.0"
+    template_path: templates/gpl-3.0
+    placeholders:
+      author: "<name of author>"
+      year: "<year>"
+  - name: "lgpl-3.0"
+    full_name: "GNU Lesser General Public License v3.0"
+    template_path: templates/lgpl-3.0
+  - name: "mit"
+    full_name: "MIT License"
+    template_path: templates/mit
+    placeholders:
+      author: "[fullname]"
+      year: "[year]"
+  - name: "mpl-2.0"
+    full_name: "Mozilla Public License 2.0"
+    template_path: templates/mpl-2.0
+  - name: "unlicense"
+    full_name: "The Unlicense"
+    template_path: templates/unlicense
+...
