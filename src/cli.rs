@@ -3,6 +3,8 @@ use clap::{Parser, Subcommand};
 use configparser::ini::Ini;
 use std::env;
 
+pub const LICENSE_ARG: &str = "LICENSE";
+
 /// Command line tool to create LICENSE files
 #[derive(Parser)]
 #[command(version)]
@@ -18,24 +20,26 @@ pub enum Commands {
     /// Print the content of the selected license
     Show {
         /// Selected license
-        license: String,
+        #[arg(value_name = LICENSE_ARG)]
+        name: String,
         /// The user or organization who holds the license
-        #[arg(short, long, default_value_t = determine_license_author(), conflicts_with = "template")]
-        user: String,
+        #[arg(short = 'u', long = "user", value_name = "USER", default_value_t = determine_license_author(), conflicts_with = "is_template")]
+        author: String,
         /// The year the license is in effect
-        #[arg(short, long, default_value_t = chrono::Utc::now().year() as u32, conflicts_with = "template")]
+        #[arg(short, long, default_value_t = chrono::Utc::now().year() as u32, conflicts_with = "is_template")]
         year: u32,
         /// License template only, no fillers for user or organization and year
-        #[arg(short, long)]
-        template: bool,
+        #[arg(short = 't', long = "template", value_name = "TEMPLATE")]
+        is_template: bool,
     },
     /// Add the selected license to the current directory
     Add {
         /// Selected license
-        license: String,
+        #[arg(value_name = LICENSE_ARG)]
+        name: String,
         /// The user or organization who holds the license
-        #[arg(short, long, default_value_t = determine_license_author())]
-        user: String,
+        #[arg(short = 'u', long = "user", value_name = "USER", default_value_t = determine_license_author())]
+        author: String,
         /// The year the license is in effect
         #[arg(short, long, default_value_t = chrono::Utc::now().year() as u32)]
         year: u32,
