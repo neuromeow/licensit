@@ -1,5 +1,5 @@
 use clap::Parser;
-use colored::*;
+use colored::Colorize;
 use include_dir::{include_dir, Dir};
 use serde::Deserialize;
 use std::error::Error;
@@ -114,6 +114,26 @@ impl Licenses {
     }
 }
 
+fn render_invalid_value_error_message(invalid_arg: &str, possible_values: &[String]) -> String {
+    let formatted_possible_values = possible_values
+        .iter()
+        .map(|value| value.green().to_string())
+        .collect::<Vec<String>>()
+        .join(", ");
+    format!(
+        "{}: invalid value for '{}'\n\nPossible values: {}\n\nFor more information, try '{}'.",
+        "error".red(),
+        invalid_arg.bold(),
+        formatted_possible_values,
+        "--help".bold()
+    )
+}
+
+fn render_nonexistent_license_error(licenses: &Licenses) -> String {
+    let licenses_names = licenses.fetch_licenses_names();
+    render_invalid_value_error_message("<LICENSE>", &licenses_names)
+}
+
 pub fn run() -> Result<(), Box<dyn Error>> {
     let licenses = Licenses::from_description_file();
     let cli = Cli::parse();
@@ -140,31 +160,21 @@ pub fn run() -> Result<(), Box<dyn Error>> {
                     println!("{}", rendered_license);
                 }
             } else {
-                eprintln!("error: invalid value for '<LICENSE>'. Possible values: {}\n\nFor more information, try '--help'.",
-                          licenses.fetch_licenses_names()
-                              .iter()
-                              .map(|name| name.green().to_string())
-                              .collect::<Vec<String>>()
-                              .join(", "));
+                let nonexistent_license_error = render_nonexistent_license_error(&licenses);
+                eprintln!("{}", nonexistent_license_error);
+                std::process::exit(2);
             }
         }
-        Commands::Add {
-            name,
-            author,
-            year,
-        } => {
+        Commands::Add { name, author, year } => {
             let license_option = licenses.find_license(name);
             if let Some(license) = license_option {
                 let rendered_license = license.render_licence(author, year);
                 let mut rendered_license_file = File::create("LICENSE")?;
                 rendered_license_file.write_all(rendered_license.as_bytes())?;
             } else {
-                eprintln!("error: invalid value for '<LICENSE>'. Possible values: {}\n\nFor more information, try '--help'.",
-                          licenses.fetch_licenses_names()
-                              .iter()
-                              .map(|name| name.green().to_string())
-                              .collect::<Vec<String>>()
-                              .join(", "));
+                let nonexistent_license_error = render_nonexistent_license_error(&licenses);
+                eprintln!("{}", nonexistent_license_error);
+                std::process::exit(2);
             }
         }
     }
