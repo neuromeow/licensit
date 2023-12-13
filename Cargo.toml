@@ -22,4 +22,5 @@ include_dir = "0.7.3"
 serde = { version = "1.0.0", features = ["derive"] }
 serde_yaml = "0.9"
 serial_test = "2.0.0"
+tempfile = "3.9.0"
 whoami = "1.4.1"
