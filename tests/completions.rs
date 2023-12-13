@@ -61,6 +61,12 @@ fn overwrite_project_license(content: String) -> Result<(), Box<dyn std::error::
     Ok(())
 }
 
+fn create_licensit_list_command() -> Command {
+    let mut licensit_list_command = Command::cargo_bin("licensit").unwrap();
+    licensit_list_command.arg("list");
+    licensit_list_command
+}
+
 fn create_licensit_show_command() -> Command {
     let mut licensit_show_command = Command::cargo_bin("licensit").unwrap();
     licensit_show_command.arg("show");
@@ -75,9 +81,7 @@ fn create_licensit_add_command() -> Command {
 
 #[test]
 fn licensit_list() {
-    let mut cmd = Command::cargo_bin("licensit").unwrap();
-    cmd.arg("list");
-    cmd.assert().success().stdout(
+    create_licensit_list_command().assert().success().stdout(
         "\
 agpl-3.0    GNU Affero General Public License v3.0
 apache-2.0  Apache License 2.0
