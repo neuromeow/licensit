@@ -4,35 +4,7 @@ use serial_test::serial;
 use std::fs;
 use std::io::Write;
 
-const UNLICENSE_LICENSE: &str =
-    "This is free and unencumbered software released into the public domain.
-
-Anyone is free to copy, modify, publish, use, compile, sell, or
-distribute this software, either in source code form or as a compiled
-binary, for any purpose, commercial or non-commercial, and by any
-means.
-
-In jurisdictions that recognize copyright laws, the author or authors
-of this software dedicate any and all copyright interest in the
-software to the public domain. We make this dedication for the benefit
-of the public at large and to the detriment of our heirs and
-successors. We intend this dedication to be an overt act of
-relinquishment in perpetuity of all present and future rights to this
-software under copyright law.
-
-THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
-OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-OTHER DEALINGS IN THE SOFTWARE.
-
-For more information, please refer to <https://unlicense.org>
-
-";
-
-const MIT_LICENSE_TEMPLATE: &str = "MIT License
+const MIT_LICENSE: &str = "MIT License
 
 Copyright (c) [year] [fullname]
 
@@ -60,7 +32,7 @@ fn render_mit_license_with_fillers(
     fullname_filler: Option<&str>,
     year_filler: Option<&str>,
 ) -> String {
-    let mut mit_license_with_fillers = String::from(MIT_LICENSE_TEMPLATE);
+    let mut mit_license_with_fillers = String::from(MIT_LICENSE);
     if let Some(filler) = fullname_filler {
         mit_license_with_fillers = mit_license_with_fillers.replace("[fullname]", filler);
     };
@@ -101,11 +73,8 @@ fn create_licensit_add_command() -> Command {
     licensit_add_command
 }
 
-// Simulated command:
-// `licensit list`
-#[ignore]
 #[test]
-fn test_licensit_list() {
+fn licensit_list() {
     let mut cmd = Command::cargo_bin("licensit").unwrap();
     cmd.arg("list");
     cmd.assert().success().stdout(
@@ -121,167 +90,8 @@ unlicense   The Unlicense
     );
 }
 
-// Only for Unlicense License as for license without placeholders.
-// Simulated command:
-// `licensit show unlicense`
 #[test]
-fn test_licensit_show_for_license_without_placeholders() {
-    create_licensit_show_command()
-        .arg("unlicense")
-        .assert()
-        .success()
-        .stdout(UNLICENSE_LICENSE);
-}
-
-// Only for Unlicense License as for license without placeholders.
-// Simulated command:
-// `LICENSE_AUTHOR=license_author_env_variable licensit show unlicense`
-#[test]
-fn test_licensit_show_with_env_variable_for_license_without_placeholders() {
-    create_licensit_show_command()
-        .arg("unlicense")
-        .env("LICENSE_AUTHOR", "license_author_env_variable")
-        .assert()
-        .success()
-        .stdout(UNLICENSE_LICENSE);
-}
-
-// Only for Unlicense License as for license without placeholders.
-// Simulated command:
-// `licensit show unlicense --user license_author_passed_var`
-#[test]
-fn test_licensit_show_with_user_option_for_license_without_placeholders() {
-    create_licensit_show_command()
-        .arg("unlicense")
-        .arg("--user=license_author_passed_var")
-        .assert()
-        .success()
-        .stdout(UNLICENSE_LICENSE);
-}
-
-// Only for Unlicense License as for license without placeholders.
-// Simulated command:
-// `LICENSE_AUTHOR=license_author_env_variable licensit show unlicense --user license_author_passed_var`
-#[test]
-fn test_licensit_show_with_user_option_and_env_variable_for_license_without_placeholders() {
-    create_licensit_show_command()
-        .arg("unlicense")
-        .arg("--user=license_author_passed_var")
-        .env("LICENSE_AUTHOR", "license_author_env_variable")
-        .assert()
-        .success()
-        .stdout(UNLICENSE_LICENSE);
-}
-
-// Only for Unlicense License as for license without placeholders.
-// Simulated command:
-// `licensit show unlicense --year 2023`
-#[test]
-fn test_licensit_show_with_year_option_for_license_without_placeholders() {
-    create_licensit_show_command()
-        .arg("unlicense")
-        .arg("--year=2023")
-        .assert()
-        .success()
-        .stdout(UNLICENSE_LICENSE);
-}
-
-// Only for Unlicense License as for license without placeholders.
-// Simulated command:
-// `licensit show unlicense --user license_author_passed_var --year 2023`
-#[test]
-fn test_licensit_show_with_user_and_year_options_for_license_without_placeholders() {
-    create_licensit_show_command()
-        .arg("unlicense")
-        .arg("--user=license_author_passed_var")
-        .arg("--year=2023")
-        .assert()
-        .success()
-        .stdout(UNLICENSE_LICENSE);
-}
-
-// Only for Unlicense License as for license without placeholders.
-// Simulated command:
-// `licensit show unlicense --template`
-#[test]
-fn test_licensit_show_with_template_option_for_license_without_placeholders() {
-    create_licensit_show_command()
-        .arg("unlicense")
-        .arg("--template")
-        .assert()
-        .success()
-        .stdout(UNLICENSE_LICENSE);
-}
-
-// Only for Unlicense License as for license without placeholders.
-// Simulated command:
-// `licensit show unlicense --user license_author_passed_var --template`
-#[test]
-fn test_licensit_show_with_user_and_template_options_for_license_without_placeholders() {
-    create_licensit_show_command()
-        .arg("unlicense")
-        .arg("--user=license_author_passed_var")
-        .arg("--template")
-        .assert()
-        .failure()
-        .stderr(
-            "error: the argument '--user <USER>' cannot be used with '--template'
-
-Usage: licensit show --user <USER> <LICENSE>
-
-For more information, try '--help'.
-",
-        );
-}
-
-// Only for Unlicense License as for license without placeholders.
-// Simulated command:
-// `licensit show unlicense --year 2023 --template`
-#[test]
-fn test_licensit_show_with_year_and_template_options_for_license_without_placeholders() {
-    create_licensit_show_command()
-        .arg("unlicense")
-        .arg("--year=2023")
-        .arg("--template")
-        .assert()
-        .failure()
-        .stderr(
-            "error: the argument '--year <YEAR>' cannot be used with '--template'
-
-Usage: licensit show --year <YEAR> <LICENSE>
-
-For more information, try '--help'.
-",
-        );
-}
-
-// Only for Unlicense License as for license without placeholders.
-// Simulated command:
-// `licensit show unlicense --user license_author_passed_var --year 2023 --template`
-#[test]
-fn test_licensit_show_with_all_options_for_license_without_placeholders() {
-    create_licensit_show_command()
-        .arg("unlicense")
-        .arg("--user=license_author_passed_var")
-        .arg("--year=2023")
-        .arg("--template")
-        .assert()
-        .failure()
-        .stderr(
-            "error: the argument '--user <USER>' cannot be used with '--template'
-
-Usage: licensit show --user <USER> --year <YEAR> <LICENSE>
-
-For more information, try '--help'.
-",
-        );
-}
-
-// Only for MIT License as for license with placeholders.
-// Simulated command:
-// `LICENSE_AUTHOR=license_author_env_variable licensit show mit`
-#[test]
-fn test_licensit_show_with_env_variable_for_license_with_placeholders() {
+fn licensit_show_with_env_variable() {
     let license_author_env_variable = "license_author_env_variable";
     create_licensit_show_command()
         .arg("mit")
@@ -294,11 +104,8 @@ fn test_licensit_show_with_env_variable_for_license_with_placeholders() {
         ));
 }
 
-// Only for MIT License as for license with placeholders.
-// Simulated command:
-// `licensit show mit --user license_author_passed_var`
 #[test]
-fn test_licensit_show_with_user_option_for_license_with_placeholders() {
+fn licensit_show_with_user_option() {
     let license_author_passed_var = "license_author_passed_var";
     let user_option_with_value = format!("--user={}", license_author_passed_var);
     create_licensit_show_command()
@@ -312,11 +119,8 @@ fn test_licensit_show_with_user_option_for_license_with_placeholders() {
         ));
 }
 
-// Only for MIT License as for license with placeholders.
-// Simulated command:
-// `LICENSE_AUTHOR=license_author_env_variable licensit show mit --user license_author_passed_var`
 #[test]
-fn test_licensit_show_with_user_option_and_env_variable_for_license_with_placeholders() {
+fn test_licensit_show_with_user_option_and_env_variable() {
     let license_author_passed_var = "license_author_passed_var";
     let user_option_with_value = format!("--user={}", license_author_passed_var);
     let license_author_env_variable = "license_author_env_variable";
@@ -332,11 +136,8 @@ fn test_licensit_show_with_user_option_and_env_variable_for_license_with_placeho
         ));
 }
 
-// Only for MIT License as for license with placeholders.
-// Simulated command:
-// `LICENSE_AUTHOR=license_author_env_variable licensit show mit --year 2023`
 #[test]
-fn test_licensit_show_with_year_option_and_env_variable_for_license_with_placeholders() {
+fn test_licensit_show_with_year_option_and_env_variable() {
     let license_author_env_variable = "license_author_env_variable";
     let year_passed_var = "2023";
     let year_option_with_value = format!("--year={}", year_passed_var);
@@ -352,11 +153,8 @@ fn test_licensit_show_with_year_option_and_env_variable_for_license_with_placeho
         ));
 }
 
-// Only for MIT License as for license with placeholders.
-// Simulated command:
-// `licensit show mit --user license_author_passed_var --year 2023`
 #[test]
-fn test_licensit_show_with_user_and_year_options_for_license_with_placeholders() {
+fn test_licensit_show_with_user_and_year_options() {
     let license_author_passed_var = "license_author_passed_var";
     let user_option_with_value = format!("--user={}", license_author_passed_var);
     let year_passed_var = "2023";
@@ -373,11 +171,8 @@ fn test_licensit_show_with_user_and_year_options_for_license_with_placeholders()
         ));
 }
 
-// Only for MIT License as for license with placeholders.
-// Simulated command:
-// `LICENSE_AUTHOR=license_author_env_variable licensit show mit --user license_author_passed_var --year 2023`
 #[test]
-fn test_licensit_show_with_user_and_year_options_and_env_variable_for_license_with_placeholders() {
+fn test_licensit_show_with_user_and_year_options_and_env_variable() {
     let license_author_passed_var = "license_author_passed_var";
     let user_option_with_value = format!("--user={}", license_author_passed_var);
     let license_author_env_variable = "license_author_env_variable";
@@ -396,17 +191,14 @@ fn test_licensit_show_with_user_and_year_options_and_env_variable_for_license_wi
         ));
 }
 
-// Only for MIT License as for license with placeholders.
-// Simulated command:
-// `licensit show mit --template`
 #[test]
-fn test_licensit_show_with_template_option_for_license_with_placeholders() {
+fn test_licensit_show_with_template_option() {
     create_licensit_show_command()
         .arg("mit")
         .arg("--template")
         .assert()
         .success()
-        .stdout(MIT_LICENSE_TEMPLATE);
+        .stdout(MIT_LICENSE);
 }
 
 // Only for MIT License as for license with placeholders.
