@@ -206,6 +206,69 @@ fn licensit_show_with_template_option() {
         .stdout(MIT_LICENSE);
 }
 
+#[test]
+fn licensit_show_with_user_and_template_options() {
+    let user_option_value = "user_option_value";
+    let user_option_with_value = format!("--user={}", user_option_value);
+    create_licensit_show_command()
+        .arg(MIT_LICENSE_NAME)
+        .arg(user_option_with_value)
+        .arg("--template")
+        .assert()
+        .failure()
+        .stderr(
+            "error: the argument '--user <USER>' cannot be used with '--template'
+
+Usage: licensit show --user <USER> <LICENSE>
+
+For more information, try '--help'.
+",
+        );
+}
+
+#[test]
+fn licensit_show_with_year_and_template_options() {
+    let year_option_value = "2023";
+    let year_option_with_value = format!("--year={}", year_option_value);
+    create_licensit_show_command()
+        .arg(MIT_LICENSE_NAME)
+        .arg(year_option_with_value)
+        .arg("--template")
+        .assert()
+        .failure()
+        .stderr(
+            "error: the argument '--year <YEAR>' cannot be used with '--template'
+
+Usage: licensit show --year <YEAR> <LICENSE>
+
+For more information, try '--help'.
+",
+        );
+}
+
+#[test]
+fn licensit_show_with_all_options() {
+    let user_option_value = "user_option_value";
+    let user_option_with_value = format!("--user={}", user_option_value);
+    let year_option_value = "2023";
+    let year_option_with_value = format!("--year={}", year_option_value);
+    create_licensit_show_command()
+        .arg(MIT_LICENSE_NAME)
+        .arg(user_option_with_value)
+        .arg(year_option_with_value)
+        .arg("--template")
+        .assert()
+        .failure()
+        .stderr(
+            "error: the argument '--user <USER>' cannot be used with '--template'
+
+Usage: licensit show --user <USER> --year <YEAR> <LICENSE>
+
+For more information, try '--help'.
+",
+        );
+}
+
 // Only for MIT License as for license with placeholders.
 // Simulated command:
 // `LICENSE_AUTHOR=license_author_env_variable licensit add mit`
