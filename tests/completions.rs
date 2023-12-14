@@ -3,6 +3,8 @@ use chrono::Datelike;
 use serial_test::serial;
 use std::fs;
 use std::io::Write;
+use std::path::{Path, PathBuf};
+use tempfile::TempDir;
 
 const MIT_LICENSE: &str = "MIT License
 
@@ -28,6 +30,33 @@ SOFTWARE.
 
 ";
 const MIT_LICENSE_NAME: &str = "mit";
+
+pub struct TempDirContext {
+    original_dir: PathBuf,
+    temp_dir: TempDir,
+}
+
+impl TempDirContext {
+    pub fn new() -> Self {
+        let original_dir = std::env::current_dir().unwrap();
+        let temp_dir = tempfile::tempdir().unwrap();
+        std::env::set_current_dir(temp_dir.path()).unwrap();
+        TempDirContext {
+            original_dir,
+            temp_dir,
+        }
+    }
+
+    pub fn path(&self) -> &Path {
+        self.temp_dir.path()
+    }
+}
+
+impl Drop for TempDirContext {
+    fn drop(&mut self) {
+        std::env::set_current_dir(&self.original_dir).unwrap();
+    }
+}
 
 fn render_mit_license_with_fillers(
     fullname_filler: Option<&str>,
