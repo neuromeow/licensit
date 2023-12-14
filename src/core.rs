@@ -159,10 +159,10 @@ pub fn run() -> Result<(), Box<dyn Error>> {
             if let Some(license) = license_option {
                 if *is_template {
                     let template = license.fetch_template();
-                    println!("{}", template);
+                    print!("{}", template);
                 } else {
                     let rendered_license = license.render_licence(author, year);
-                    println!("{}", rendered_license);
+                    print!("{}", rendered_license);
                 }
             } else {
                 let nonexistent_license_error = render_nonexistent_license_error(&licenses);
