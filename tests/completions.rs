@@ -2,7 +2,6 @@ use assert_cmd::Command;
 use chrono::Datelike;
 use serial_test::serial;
 use std::fs;
-use std::io::Write;
 use std::path::{Path, PathBuf};
 use tempfile::TempDir;
 
@@ -73,21 +72,6 @@ fn render_mit_license_with_fillers(
             mit_license_with_fillers.replace("[year]", current_year.as_str());
     };
     mit_license_with_fillers
-}
-
-fn read_project_license() -> Result<String, Box<dyn std::error::Error>> {
-    let project_license = fs::read_to_string("LICENSE")?;
-    Ok(project_license)
-}
-
-fn overwrite_project_license(content: String) -> Result<(), Box<dyn std::error::Error>> {
-    let mut project_license = fs::OpenOptions::new()
-        .write(true)
-        .truncate(true)
-        .open("LICENSE")?;
-    project_license.write(content.as_bytes())?;
-    project_license.flush()?;
-    Ok(())
 }
 
 fn create_licensit_list_command() -> Command {
@@ -297,157 +281,130 @@ For more information, try '--help'.
         );
 }
 
-// Only for MIT License as for license with placeholders.
-// Simulated command:
-// `LICENSE_AUTHOR=license_author_env_variable licensit add mit`
 #[test]
 #[serial]
-#[ignore]
-fn test_licensit_add_with_env_variable_for_license_with_placeholders() {
-    let original_project_license = read_project_license().unwrap();
-    let license_author_env_variable = "license_author_env_variable";
+fn test_licensit_add_with_user_option() {
+    let temp_dir_context = TempDirContext::new();
+    let user_option_value = "user_option_value";
+    let user_option_with_value = format!("--user={}", user_option_value);
     create_licensit_add_command()
-        .arg("mit")
-        .env("LICENSE_AUTHOR", license_author_env_variable)
-        .assert()
-        .success();
-    let mut modified_project_license = read_project_license().unwrap();
-    modified_project_license.push('\n');
-    overwrite_project_license(original_project_license).unwrap();
-    assert_eq!(
-        modified_project_license,
-        render_mit_license_with_fillers(Some(license_author_env_variable), None)
-    );
-}
-
-// Only for MIT License as for license with placeholders.
-// Simulated command:
-// `licensit add mit --user license_author_passed_var`
-#[test]
-#[serial]
-#[ignore]
-fn test_licensit_add_with_user_option_for_license_with_placeholders() {
-    let original_project_license = read_project_license().unwrap();
-    let license_author_passed_var = "license_author_passed_var";
-    let user_option_with_value = format!("--user={}", license_author_passed_var);
-    create_licensit_add_command()
-        .arg("mit")
+        .arg(MIT_LICENSE_NAME)
         .arg(user_option_with_value)
         .assert()
         .success();
-    let mut modified_project_license = read_project_license().unwrap();
-    modified_project_license.push('\n');
-    overwrite_project_license(original_project_license).unwrap();
+    let added_license_file_content =
+        fs::read_to_string(temp_dir_context.path().join("LICENSE")).unwrap();
     assert_eq!(
-        modified_project_license,
-        render_mit_license_with_fillers(Some(license_author_passed_var), None)
+        added_license_file_content,
+        render_mit_license_with_fillers(Some(user_option_value), None)
     );
 }
 
-// Only for MIT License as for license with placeholders.
-// Simulated command:
-// `LICENSE_AUTHOR=license_author_env_variable licensit add mit --user license_author_passed_var`
 #[test]
 #[serial]
-#[ignore]
-fn test_licensit_add_with_user_option_and_env_variable_for_license_with_placeholders() {
-    let original_project_license = read_project_license().unwrap();
-    let license_author_passed_var = "license_author_passed_var";
-    let user_option_with_value = format!("--user={}", license_author_passed_var);
-    let license_author_env_variable = "license_author_env_variable";
+fn licensit_add_with_license_author_env_variable() {
+    let temp_dir_context = TempDirContext::new();
+    let license_author_env_variable_value = "license_author_env_variable";
     create_licensit_add_command()
-        .arg("mit")
+        .arg(MIT_LICENSE_NAME)
+        .env("LICENSE_AUTHOR", license_author_env_variable_value)
+        .assert()
+        .success();
+    let added_license_file_content =
+        fs::read_to_string(temp_dir_context.path().join("LICENSE")).unwrap();
+    assert_eq!(
+        added_license_file_content,
+        render_mit_license_with_fillers(Some(license_author_env_variable_value), None)
+    );
+}
+
+#[test]
+#[serial]
+fn test_licensit_add_with_user_option_and_license_author_env_variable() {
+    let temp_dir_context = TempDirContext::new();
+    let user_option_value = "user_option_value";
+    let user_option_with_value = format!("--user={}", user_option_value);
+    let license_author_env_variable_value = "license_author_env_variable";
+    create_licensit_add_command()
+        .arg(MIT_LICENSE_NAME)
         .arg(user_option_with_value)
-        .env("LICENSE_AUTHOR", license_author_env_variable)
+        .env("LICENSE_AUTHOR", license_author_env_variable_value)
         .assert()
         .success();
-    let mut modified_project_license = read_project_license().unwrap();
-    modified_project_license.push('\n');
-    overwrite_project_license(original_project_license).unwrap();
+    let added_license_file_content =
+        fs::read_to_string(temp_dir_context.path().join("LICENSE")).unwrap();
     assert_eq!(
-        modified_project_license,
-        render_mit_license_with_fillers(Some(license_author_passed_var), None)
+        added_license_file_content,
+        render_mit_license_with_fillers(Some(user_option_value), None)
     );
 }
 
-// Only for MIT License as for license with placeholders.
-// Simulated command:
-// `LICENSE_AUTHOR=license_author_env_variable licensit add mit --year 2023`
 #[test]
 #[serial]
-#[ignore]
-fn test_licensit_add_with_year_option_and_env_variable_for_license_with_placeholders() {
-    let original_project_license = read_project_license().unwrap();
-    let license_author_env_variable = "license_author_env_variable";
-    let year_passed_var = "2023";
-    let year_option_with_value = format!("--year={}", year_passed_var);
+fn test_licensit_add_with_user_and_year_options() {
+    let temp_dir_context = TempDirContext::new();
+    let user_option_value = "user_option_value";
+    let user_option_with_value = format!("--user={}", user_option_value);
+    let year_option_value = "2023";
+    let year_option_with_value = format!("--year={}", year_option_value);
     create_licensit_add_command()
-        .arg("mit")
-        .arg(year_option_with_value)
-        .env("LICENSE_AUTHOR", license_author_env_variable)
-        .assert()
-        .success();
-    let mut modified_project_license = read_project_license().unwrap();
-    modified_project_license.push('\n');
-    overwrite_project_license(original_project_license).unwrap();
-    assert_eq!(
-        modified_project_license,
-        render_mit_license_with_fillers(Some(license_author_env_variable), Some(year_passed_var))
-    );
-}
-
-// Only for MIT License as for license with placeholders.
-// Simulated command:
-// `licensit add mit --user license_author_passed_var --year 2023`
-#[test]
-#[serial]
-#[ignore]
-fn test_licensit_add_with_user_and_year_options_for_license_with_placeholders() {
-    let original_project_license = read_project_license().unwrap();
-    let license_author_passed_var = "license_author_passed_var";
-    let user_option_with_value = format!("--user={}", license_author_passed_var);
-    let year_passed_var = "2023";
-    let year_option_with_value = format!("--year={}", year_passed_var);
-    create_licensit_add_command()
-        .arg("mit")
+        .arg(MIT_LICENSE_NAME)
         .arg(user_option_with_value)
         .arg(year_option_with_value)
         .assert()
         .success();
-    let mut modified_project_license = read_project_license().unwrap();
-    modified_project_license.push('\n');
-    overwrite_project_license(original_project_license).unwrap();
+    let added_license_file_content =
+        fs::read_to_string(temp_dir_context.path().join("LICENSE")).unwrap();
     assert_eq!(
-        modified_project_license,
-        render_mit_license_with_fillers(Some(license_author_passed_var), Some(year_passed_var))
+        added_license_file_content,
+        render_mit_license_with_fillers(Some(user_option_value), Some(year_option_value))
     );
 }
 
-// Only for MIT License as for license with placeholders.
-// Simulated command:
-// `LICENSE_AUTHOR=license_author_env_variable licensit add mit --user license_author_passed_var --year 2023`
 #[test]
 #[serial]
-#[ignore]
-fn test_licensit_add_with_user_and_year_options_and_env_for_license_with_placeholders() {
-    let original_project_license = read_project_license().unwrap();
-    let license_author_passed_var = "license_author_passed_var";
-    let user_option_with_value = format!("--user={}", license_author_passed_var);
-    let license_author_env_variable = "license_author_env_variable";
-    let year_passed_var = "2023";
-    let year_option_with_value = format!("--year={}", year_passed_var);
+fn test_licensit_add_with_year_option_and_license_author_env_variable() {
+    let temp_dir_context = TempDirContext::new();
+    let year_option_value = "2023";
+    let year_option_with_value = format!("--year={}", year_option_value);
+    let license_author_env_variable_value = "license_author_env_variable_value";
     create_licensit_add_command()
-        .arg("mit")
-        .arg(user_option_with_value)
+        .arg(MIT_LICENSE_NAME)
         .arg(year_option_with_value)
-        .env("LICENSE_AUTHOR", license_author_env_variable)
+        .env("LICENSE_AUTHOR", license_author_env_variable_value)
         .assert()
         .success();
-    let mut modified_project_license = read_project_license().unwrap();
-    modified_project_license.push('\n');
-    overwrite_project_license(original_project_license).unwrap();
+    let added_license_file_content =
+        fs::read_to_string(temp_dir_context.path().join("LICENSE")).unwrap();
     assert_eq!(
-        modified_project_license,
-        render_mit_license_with_fillers(Some(license_author_passed_var), Some(year_passed_var))
+        added_license_file_content,
+        render_mit_license_with_fillers(
+            Some(license_author_env_variable_value),
+            Some(year_option_value)
+        )
+    );
+}
+
+#[test]
+#[serial]
+fn test_licensit_add_with_all_options_and_license_author_env_variable() {
+    let temp_dir_context = TempDirContext::new();
+    let user_option_value = "user_option_value";
+    let user_option_with_value = format!("--user={}", user_option_value);
+    let year_option_value = "2023";
+    let year_option_with_value = format!("--year={}", year_option_value);
+    let license_author_env_variable_value = "license_author_env_variable_value";
+    create_licensit_add_command()
+        .arg(MIT_LICENSE_NAME)
+        .arg(user_option_with_value)
+        .arg(year_option_with_value)
+        .env("LICENSE_AUTHOR", license_author_env_variable_value)
+        .assert()
+        .success();
+    let added_license_file_content =
+        fs::read_to_string(temp_dir_context.path().join("LICENSE")).unwrap();
+    assert_eq!(
+        added_license_file_content,
+        render_mit_license_with_fillers(Some(user_option_value), Some(year_option_value))
     );
 }
