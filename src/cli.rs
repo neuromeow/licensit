@@ -4,6 +4,7 @@ use configparser::ini::Ini;
 use std::env;
 
 pub const LICENSE_ARG: &str = "LICENSE";
+pub const LICENSE_AUTHOR_ENV_VARIABLE_NAME: &str = "LICENSE_AUTHOR";
 
 /// Command line tool to create LICENSE files
 #[derive(Parser)]
@@ -47,7 +48,7 @@ pub enum Commands {
 }
 
 fn determine_license_author() -> String {
-    let license_author_env_variable_result = env::var("LICENSE_AUTHOR");
+    let license_author_env_variable_result = env::var(LICENSE_AUTHOR_ENV_VARIABLE_NAME);
     if let Ok(license_author_env_variable) = license_author_env_variable_result {
         license_author_env_variable
     } else {
