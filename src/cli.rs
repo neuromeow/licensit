@@ -70,10 +70,44 @@ fn determine_license_author() -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use serial_test::serial;
+    use std::env;
+    use std::fs::File;
+    use std::io::Write;
 
     #[test]
     fn verify_cli() {
         use clap::CommandFactory;
         Cli::command().debug_assert()
+    }
+
+    #[test]
+    #[serial]
+    fn determine_license_author_from_env_variable() {
+        let env_variable_value = "license_author_env_variable_value";
+        env::set_var(LICENSE_AUTHOR_ENV_VARIABLE_NAME, env_variable_value);
+        assert_eq!(determine_license_author(), env_variable_value);
+    }
+
+    #[test]
+    #[serial]
+    fn determine_license_author_from_git_config_file() {
+        env::remove_var(LICENSE_AUTHOR_ENV_VARIABLE_NAME);
+        let git_config_user_name_value = "git_config_user_name_value";
+        let temp_dir = tempfile::tempdir().unwrap();
+        env::set_var("HOME", temp_dir.path().to_str().unwrap());
+        let git_config_file_pathname = temp_dir.path().join(".gitconfig");
+        let mut file = File::create(&git_config_file_pathname).unwrap();
+        writeln!(file, "[user]\n\tname = {}", git_config_user_name_value).unwrap();
+        file.sync_all().unwrap();
+        assert_eq!(determine_license_author(), git_config_user_name_value);
+    }
+
+    #[test]
+    #[serial]
+    fn determine_license_author_from_current_effective_user() {
+        env::remove_var(LICENSE_AUTHOR_ENV_VARIABLE_NAME);
+        env::remove_var("HOME");
+        assert_eq!(determine_license_author(), whoami::username());
     }
 }
