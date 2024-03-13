@@ -159,10 +159,10 @@ pub fn run() -> Result<(), Box<dyn Error>> {
             if let Some(license) = license_option {
                 if *is_template {
                     let template = license.fetch_template();
-                    println!("{}", template);
+                    print!("{}", template);
                 } else {
                     let rendered_license = license.render_licence(author, year);
-                    println!("{}", rendered_license);
+                    print!("{}", rendered_license);
                 }
             } else {
                 let nonexistent_license_error = render_nonexistent_license_error(&licenses);
@@ -184,4 +184,51 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         }
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn render_invalid_value_error_message_with_single_possible_value() {
+        let invalid_value = "invalid_value";
+        let possible_values = vec!["mit".to_string()];
+        let expected_output = format!(
+            "{}: invalid value for '{}'\n\nPossible values: {}\n\nFor more information, try '{}'.",
+            "error".red(),
+            format!("<{}>", invalid_value).bold(),
+            possible_values[0].green(),
+            "--help".bold()
+        );
+        assert_eq!(
+            render_invalid_value_error_message(invalid_value, &possible_values),
+            expected_output
+        );
+    }
+
+    #[test]
+    fn render_invalid_value_error_message_with_multiple_possible_values() {
+        let invalid_value = "invalid_value";
+        let possible_values = vec![
+            "agpl-3.0".to_string(),
+            "mit".to_string(),
+            "green".to_string(),
+        ];
+        let expected_output = format!(
+            "{}: invalid value for '{}'\n\nPossible values: {}\n\nFor more information, try '{}'.",
+            "error".red(),
+            format!("<{}>", invalid_value).bold(),
+            possible_values
+                .iter()
+                .map(|value| value.green().to_string())
+                .collect::<Vec<String>>()
+                .join(", "),
+            "--help".bold()
+        );
+        assert_eq!(
+            render_invalid_value_error_message(invalid_value, &possible_values),
+            expected_output
+        );
+    }
 }
