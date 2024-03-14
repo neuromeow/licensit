@@ -165,6 +165,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
                     print!("{}", rendered_license);
                 }
             } else {
+                // This error scenario can also be handled using `clap`.
                 let nonexistent_license_error = render_nonexistent_license_error(&licenses);
                 eprintln!("{}", nonexistent_license_error);
                 std::process::exit(2);
@@ -177,6 +178,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
                 let mut rendered_license_file = File::create("LICENSE")?;
                 rendered_license_file.write_all(rendered_license.as_bytes())?;
             } else {
+                // This error scenario can also be handled using `clap`.
                 let nonexistent_license_error = render_nonexistent_license_error(&licenses);
                 eprintln!("{}", nonexistent_license_error);
                 std::process::exit(2);
