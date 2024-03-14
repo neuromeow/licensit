@@ -30,7 +30,7 @@ pub enum Commands {
         #[arg(short, long, default_value_t = chrono::Utc::now().year() as u32, conflicts_with = "is_template")]
         year: u32,
         /// License template only, no fillers for user or organization and year
-        #[arg(short = 't', long = "template", value_name = "TEMPLATE")]
+        #[arg(short = 't', long = "template")]
         is_template: bool,
     },
     /// Add the selected license to the current directory

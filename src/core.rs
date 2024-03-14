@@ -71,7 +71,7 @@ impl License {
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Deserialize)]
 struct Licenses {
     licenses: Vec<License>,
 }
