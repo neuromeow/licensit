@@ -31,7 +31,7 @@ impl Placeholders {
 struct License {
     name: String,
     full_name: String,
-    template_path: String,
+    template: String,
     placeholders: Option<Placeholders>,
 }
 
@@ -44,8 +44,8 @@ impl License {
         &self.full_name
     }
 
-    fn template_path(&self) -> &str {
-        &self.template_path
+    fn template(&self) -> &str {
+        &self.template
     }
 
     fn placeholders(&self) -> &Option<Placeholders> {
@@ -53,7 +53,7 @@ impl License {
     }
 
     fn fetch_template(&self) -> &str {
-        let template_relative_path = self.template_path();
+        let template_relative_path = self.template();
         let template_file = LICENSES_DATA_DIR.get_file(template_relative_path).unwrap();
         template_file.contents_utf8().unwrap()
     }
