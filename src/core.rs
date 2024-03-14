@@ -18,11 +18,11 @@ struct Placeholders {
 }
 
 impl Placeholders {
-    fn get_author(&self) -> &str {
+    fn author(&self) -> &str {
         &self.author
     }
 
-    fn get_year(&self) -> &str {
+    fn year(&self) -> &str {
         &self.year
     }
 }
@@ -36,34 +36,34 @@ struct License {
 }
 
 impl License {
-    fn get_name(&self) -> &str {
+    fn name(&self) -> &str {
         &self.name
     }
 
-    fn get_full_name(&self) -> &str {
+    fn full_name(&self) -> &str {
         &self.full_name
     }
 
-    fn get_template_path(&self) -> &str {
+    fn template_path(&self) -> &str {
         &self.template_path
     }
 
-    fn get_placeholders(&self) -> &Option<Placeholders> {
+    fn placeholders(&self) -> &Option<Placeholders> {
         &self.placeholders
     }
 
     fn fetch_template(&self) -> &str {
-        let template_relative_path = self.get_template_path();
+        let template_relative_path = self.template_path();
         let template_file = LICENSES_DATA_DIR.get_file(template_relative_path).unwrap();
         template_file.contents_utf8().unwrap()
     }
 
     fn render_licence(&self, author: &str, year: &u32) -> String {
         let template = self.fetch_template();
-        let placeholders_option = self.get_placeholders();
+        let placeholders_option = self.placeholders();
         if let Some(placeholders) = placeholders_option {
-            let author_placeholder = placeholders.get_author();
-            let year_placeholder = placeholders.get_year();
+            let author_placeholder = placeholders.author();
+            let year_placeholder = placeholders.year();
             let rendered_license = template.replace(author_placeholder, author);
             return rendered_license.replace(year_placeholder, &year.to_string());
         }
@@ -85,27 +85,27 @@ impl Licenses {
         serde_yaml::from_str::<Licenses>(description_file_content).unwrap()
     }
 
-    fn get_licenses(&self) -> &Vec<License> {
+    fn licenses(&self) -> &Vec<License> {
         &self.licenses
     }
 
     fn find_license(&self, name: &str) -> Option<&License> {
-        self.get_licenses()
+        self.licenses()
             .iter()
-            .find(|&license| license.get_name() == name)
+            .find(|&license| license.name() == name)
     }
 
     fn fetch_licenses_names(&self) -> Vec<String> {
-        self.get_licenses()
+        self.licenses()
             .iter()
-            .map(|license| license.get_name().to_string())
+            .map(|license| license.name().to_string())
             .collect()
     }
 
     fn fetch_licenses_full_names(&self) -> Vec<String> {
-        self.get_licenses()
+        self.licenses()
             .iter()
-            .map(|license| license.get_full_name().to_string())
+            .map(|license| license.full_name().to_string())
             .collect()
     }
 
