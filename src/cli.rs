@@ -6,7 +6,7 @@ use std::env;
 pub const LICENSE_ARG: &str = "LICENSE";
 pub const LICENSE_AUTHOR_ENV_VARIABLE_NAME: &str = "LICENSE_AUTHOR";
 
-/// Command line tool to create LICENSE files
+/// Command-line tool to create LICENSE files
 #[derive(Parser)]
 #[command(version)]
 pub struct Cli {
@@ -30,7 +30,7 @@ pub enum Commands {
         #[arg(short, long, default_value_t = chrono::Utc::now().year() as u32, conflicts_with = "is_template")]
         year: u32,
         /// License template only, no fillers for user or organization and year
-        #[arg(short = 't', long = "template", value_name = "TEMPLATE")]
+        #[arg(short = 't', long = "template")]
         is_template: bool,
     },
     /// Add the selected license to the current directory
@@ -92,9 +92,11 @@ mod tests {
     #[test]
     #[serial]
     fn determine_license_author_from_git_config_file() {
+        // Remove the possibly present environment variable for this test case.
         env::remove_var(LICENSE_AUTHOR_ENV_VARIABLE_NAME);
         let git_config_user_name_value = "git_config_user_name_value";
         let temp_dir = tempfile::tempdir().unwrap();
+        // Override the environment variable for working with temporary files.
         env::set_var("HOME", temp_dir.path().to_str().unwrap());
         let git_config_file_pathname = temp_dir.path().join(".gitconfig");
         let mut file = File::create(&git_config_file_pathname).unwrap();
@@ -106,6 +108,7 @@ mod tests {
     #[test]
     #[serial]
     fn determine_license_author_from_current_effective_user() {
+        // Remove the possibly present environment variables for this test case.
         env::remove_var(LICENSE_AUTHOR_ENV_VARIABLE_NAME);
         env::remove_var("HOME");
         assert_eq!(determine_license_author(), whoami::username());
