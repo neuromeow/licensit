@@ -1,10 +1,10 @@
 [package]
 name = "licensit"
-version = "1.0.0"
+version = "1.1.0"
 authors = ["neuromeow <neuromeowhouse@gmail.com>"]
-rust-version = "1.70.0"
+rust-version = "1.74.1"
 edition = "2021"
-description = "Command line tool to create LICENSE files"
+description = "Command-line tool to create LICENSE files"
 readme = "README.md"
 homepage = "https://github.com/neuromeow/licensit"
 repository = "https://github.com/neuromeow/licensit"
@@ -13,14 +13,14 @@ keywords = ["cli", "license-management"]
 categories = ["command-line-utilities"]
 
 [dependencies]
-assert_cmd = "2.0.12"
-clap = { version = "4.4.6", features = ["derive"] }
-chrono = "0.4.31"
-colored = "2.0.0"
-configparser = "3.0.2"
+assert_cmd = "2.0.14"
+clap = { version = "4.5.2", features = ["derive"] }
+chrono = "0.4.35"
+colored = "2.1.0"
+configparser = "3.0.4"
 include_dir = "0.7.3"
 serde = { version = "1.0.0", features = ["derive"] }
 serde_yaml = "0.9"
-serial_test = "2.0.0"
-tempfile = "3.9.0"
-whoami = "1.4.1"
+serial_test = "3.0.0"
+tempfile = "3.10.1"
+whoami = "1.5.1"
