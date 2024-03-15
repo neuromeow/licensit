@@ -27,6 +27,9 @@ licenses:
   - name: "bsl-1.0"
     full_name: "Boost Software License 1.0"
     template: templates/bsl-1.0
+  - name: "cc0-1.0"
+    full_name: "Creative Commons Zero v1.0 Universal"
+    template: templates/cc0-1.0
   - name: "gpl-3.0"
     full_name: "GNU General Public License v3.0"
     placeholders:
