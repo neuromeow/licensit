@@ -12,6 +12,12 @@ licenses:
       author: "[name of copyright owner]"
       year: "[yyyy]"
     template: templates/apache-2.0
+  - name: "bsd-2-clause"
+    full_name: "BSD 2-Clause “Simplified” License"
+    placeholders:
+      author: "[fullname]"
+      year: "[year]"
+    template: templates/bsd-2-clause
   - name: "gpl-3.0"
     full_name: "GNU General Public License v3.0"
     placeholders:
