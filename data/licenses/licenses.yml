@@ -18,6 +18,12 @@ licenses:
       author: "[fullname]"
       year: "[year]"
     template: templates/bsd-2-clause
+  - name: "bsd-3-clause"
+    full_name: "BSD 3-Clause “New” or “Revised” License"
+    placeholders:
+      author: "[fullname]"
+      year: "[year]"
+    template: templates/bsd-3-clause
   - name: "gpl-3.0"
     full_name: "GNU General Public License v3.0"
     placeholders:
