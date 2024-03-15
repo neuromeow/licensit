@@ -45,6 +45,12 @@ licenses:
       author: "<name of author>"
       year: "<year>"
     template: templates/gpl-3.0
+  - name: "lgpl-2.1"
+    full_name: "GNU Lesser General Public License v2.1"
+    placeholders:
+      author: "<name of author>"
+      year: "<year>"
+    template: templates/lgpl-2.1
   - name: "lgpl-3.0"
     full_name: "GNU Lesser General Public License v3.0"
     template: templates/lgpl-3.0
