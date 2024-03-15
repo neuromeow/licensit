@@ -33,6 +33,12 @@ licenses:
   - name: "epl-2.0"
     full_name: "Eclipse Public License 2.0"
     template: templates/epl-2.0
+  - name: "gpl-2.0"
+    full_name: "GNU General Public License v2.0"
+    placeholders:
+      author: "<name of author>"
+      year: "<year>"
+    template: templates/gpl-2.0
   - name: "gpl-3.0"
     full_name: "GNU General Public License v3.0"
     placeholders:
