@@ -113,7 +113,7 @@ impl Licenses {
         self.fetch_licenses_names()
             .iter()
             .zip(&self.fetch_licenses_full_names())
-            .map(|(name, full_name)| format!("{: <12}{}", name, full_name))
+            .map(|(name, full_name)| format!("{: <16}{}", name, full_name))
             .collect()
     }
 }
