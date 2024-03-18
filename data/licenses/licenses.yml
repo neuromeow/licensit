@@ -12,15 +12,45 @@ licenses:
       author: "[name of copyright owner]"
       year: "[yyyy]"
     template: templates/apache-2.0
+  - name: "bsd-2-clause"
+    full_name: "BSD 2-Clause “Simplified” License"
+    placeholders:
+      author: "[fullname]"
+      year: "[year]"
+    template: templates/bsd-2-clause
+  - name: "bsd-3-clause"
+    full_name: "BSD 3-Clause “New” or “Revised” License"
+    placeholders:
+      author: "[fullname]"
+      year: "[year]"
+    template: templates/bsd-3-clause
+  - name: "bsl-1.0"
+    full_name: "Boost Software License 1.0"
+    template: templates/bsl-1.0
+  - name: "cc0-1.0"
+    full_name: "Creative Commons Zero v1.0 Universal"
+    template: templates/cc0-1.0
+  - name: "epl-2.0"
+    full_name: "Eclipse Public License 2.0"
+    template: templates/epl-2.0
+  - name: "gpl-2.0"
+    full_name: "GNU General Public License v2.0"
+    placeholders:
+      author: "<name of author>"
+      year: "<year>"
+    template: templates/gpl-2.0
   - name: "gpl-3.0"
     full_name: "GNU General Public License v3.0"
     placeholders:
       author: "<name of author>"
       year: "<year>"
     template: templates/gpl-3.0
-  - name: "lgpl-3.0"
-    full_name: "GNU Lesser General Public License v3.0"
-    template: templates/lgpl-3.0
+  - name: "lgpl-2.1"
+    full_name: "GNU Lesser General Public License v2.1"
+    placeholders:
+      author: "<name of author>"
+      year: "<year>"
+    template: templates/lgpl-2.1
   - name: "mit"
     full_name: "MIT License"
     placeholders:
