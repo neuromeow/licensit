@@ -1,16 +1,22 @@
 # licensit
 
-`licensit` is a command line tool to create LICENSE files.
+`licensit` is a command-line tool to create LICENSE files.
 
 ### Supported licenses
 
-- GNU Affero General Public License v3.0
-- Apache License 2.0
-- GNU General Public License v3.0
-- GNU Lesser General Public License v3.0
-- MIT License
-- Mozilla Public License 2.0
-- The Unlicense
+- GNU Affero General Public License v3.0 (AGPL-3.0)
+- Apache License 2.0 (Apache-2.0)
+- BSD 2-Clause “Simplified” License (BSD-2-Clause)
+- BSD 3-Clause “New” or “Revised” License (BSD-3-Clause)
+- Boost Software License 1.0 (BSL-1.0)
+- Creative Commons Zero v1.0 Universal (CC0-1.0)
+- Eclipse Public License 2.0 (EPL-2.0)
+- GNU General Public License v2.0 (GPL-2.0)
+- GNU General Public License v3.0 (GPL-3.0)
+- GNU Lesser General Public License v2.1 (LGPL-2.1)
+- MIT License (MIT)
+- Mozilla Public License 2.0 (MPL-2.0)
+- The Unlicense (Unlicense)
 
 ## Installation
 
@@ -31,81 +37,67 @@ Cargo will build the `licensit` binary and place it in `$HOME/.cargo`.
 
 ## Usage
 
-```
-Command line tool to create LICENSE files
+`licensit` simplifies the process of creating and managing license files for your projects.
 
-Usage: licensit <COMMAND>
-
-Commands:
-  list  Print a list of all available licenses
-  show  Print the content of the selected license
-  add   Add the selected license to the current directory
-  help  Print this message or the help of the given subcommand(s)
-
-Options:
-  -h, --help     Print help
-  -V, --version  Print version
-```
+### Listing Available Licenses
 
 ```
-Print a list of all available licenses
-
-Usage: licensit list
-
-Options:
-  -h, --help  Print help
+licensit list
 ```
 
-```
-Print the content of the selected license
+Shows all supported licenses.
 
-Usage: licensit show [OPTIONS] <LICENSE>
+### Showing License Content
 
-Arguments:
-  <LICENSE>  Selected license [possible values: agpl-3.0, apache-2.0, gpl-3.0, lgpl-3.0, mit, mpl-2.0, unlicense]
-
-Options:
-  -u, --user <USER>  The user or organization who holds the license [default: neuromeow]
-  -y, --year <YEAR>  The year the license is in effect [default: 2023]
-  -t, --template     License template only, no fillers for user or organization and year
-  -h, --help         Print help
-```
+To view the content of a specific license with the author and year filled in:
 
 ```
-Add the selected license to the current directory
-
-Usage: licensit add [OPTIONS] <LICENSE>
-
-Arguments:
-  <LICENSE>  Selected license [possible values: agpl-3.0, apache-2.0, gpl-3.0, lgpl-3.0, mit, mpl-2.0, unlicense]
-
-Options:
-  -u, --user <USER>  The user or organization who holds the license [default: neuromeow]
-  -y, --year <YEAR>  The year the license is in effect [default: 2023]
-  -h, --help         Print help
+licensit show [LICENSE] [--user USER] [--year YEAR]
 ```
 
-```
-Print this message or the help of the given subcommand(s)
+- `[LICENSE]`: The ID of the license you want to display (for example, `mit`, `apache-2.0`)
+- `--user [USER]`: Specifies the license holder's name. If not provided, `licensit` will use the following sources in order to determine the user name:
+  - `LICENSE_AUTHOR` environment variable
+  - `user.name` entry in the `$HOME/.gitconfig` file
+  - Username associated with the current effective user ID
+- `--year [YEAR]`: Sets the year during which the license is effective. Defaults to the current year if not specified
 
-Usage: licensit help [COMMAND]...
+To display just the template of a license (without any specific user or year information):
 
-Arguments:
-  [COMMAND]...  Print help for the subcommand(s)
 ```
+licensit show [LICENSE] --template
+```
+
+- `[LICENSE]`: The ID of the license whose template you want to display (for example, `mit`, `apache-2.0`)
+- `--template`: Displays the license template with placeholders for the user and year. This option cannot be used with `--user` or `--year`
+
+### Adding a License to Your Project
+
+To add a license file to your current directory:
+
+```
+licensit add [LICENSE] [--user USER] [--year YEAR]
+```
+
+Creates a `LICENSE` file in the current directory with the specified details.
+
+### Help and Information
+
+```
+licensit help [COMMAND]
+```
+
+Provides detailed help for a specific command (`list`, `show`, or `add`).
 
 ## Limitations
 
-If the `--year` option is omitted, the current year is used.
+To add a new license to `licensit`, place the license template file in the `data/licenses` directory or a subfolder. 
+Then, update the `licenses.yml` file, specifying the short name, full name of the license, placeholders for the author and year (if needed), and the path to the template file within the `data/licenses` structure. 
+This setup allows for the easy expansion of licensit by adding new licenses without altering the existing codebase.
 
-To determine the user or organization who holds the license, the following order is used:
-
-- Command line option: `-u`, `--user`
-- Environment variable: `LICENSE_AUTHOR`
-- `user.name` variable in the `$HOME/.gitconfig` file
-- Username associated with the current effective user ID
-
-If your name is set in the `$HOME/.gitconfig` file, you can omit the `--user` option.
+In the current version of `licensit`, the tests primarily focus on command execution, covering basic scenarios such as specifying the user via an option or determining the author through an environment variable. 
+Consequently, the automated tests are limited and utilize the MIT license template as a representative example. 
+These tests do not cover scenarios without explicitly specifying a user or author, potentially missing out on capturing the full range of tool usage. 
 
 ## License
 
