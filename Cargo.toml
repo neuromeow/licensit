@@ -1,6 +1,6 @@
 [package]
 name = "licensit"
-version = "1.2.0"
+version = "1.2.1"
 authors = ["neuromeow <neuromeowhouse@gmail.com>"]
 rust-version = "1.74.1"
 edition = "2021"
@@ -13,14 +13,14 @@ keywords = ["cli", "license-management"]
 categories = ["command-line-utilities"]
 
 [dependencies]
-assert_cmd = "2.0.14"
-clap = { version = "4.5.2", features = ["derive"] }
-chrono = "0.4.35"
+assert_cmd = "2.0.16"
+clap = { version = "4.5.16", features = ["derive"] }
+chrono = "0.4.38"
 colored = "2.1.0"
-configparser = "3.0.4"
-include_dir = "0.7.3"
-serde = { version = "1.0.0", features = ["derive"] }
-serde_yaml = "0.9"
-serial_test = "3.0.0"
-tempfile = "3.10.1"
+configparser = "3.1.0"
+include_dir = "0.7.4"
+serde = { version = "1.0.209", features = ["derive"] }
+serde_yaml = "0.9.33"
+serial_test = "3.1.1"
+tempfile = "3.12.0"
 whoami = "1.5.1"
