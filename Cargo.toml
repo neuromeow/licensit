@@ -1,6 +1,6 @@
 [package]
 name = "licensit"
-version = "1.2.0"
+version = "1.2.1"
 authors = ["neuromeow <neuromeowhouse@gmail.com>"]
 rust-version = "1.74.1"
 edition = "2021"
